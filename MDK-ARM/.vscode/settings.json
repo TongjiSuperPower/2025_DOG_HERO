@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "telescope_task.h": "c",
+        "pid.h": "c",
+        "math_lib.h": "c",
+        "bsp_tim.h": "c",
+        "servo_task.h": "c",
+        "remote_control.h": "c",
+        "power_control.h": "c",
+        "chassis_task.h": "c",
+        "shoot_task.h": "c"
+    }
+}
