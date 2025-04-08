@@ -64,3 +64,9 @@ MDK-ARM/.vscode/c_cpp_properties.json
 MDK-ARM/.vscode/keil-assistant.log
 MDK-ARM/2025_HERO_FRIC.uvoptx
 MDK-ARM/2025_HERO_FRIC.uvprojx
+MDK-ARM/.vscode/c_cpp_properties.json
+MDK-ARM/.vscode/keil-assistant.log
+MDK-ARM/.vscode/uv4.log
+MDK-ARM/2025_HERO_FRIC/shoot_task.o
+*.o
+*.crf

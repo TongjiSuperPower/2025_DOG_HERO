@@ -35,7 +35,7 @@
 
 //Ħ����3508���PID����
 //���ٶȻ�PID����
-#define GimbalMotor3508PosPid3_ID201_kp 205.0f
+#define GimbalMotor3508PosPid3_ID201_kp 230.0f//220.0f//205.0f
 #define GimbalMotor3508PosPid3_ID201_ki 0.015f
 #define GimbalMotor3508PosPid3_ID201_kd 10.0f
 
@@ -69,7 +69,7 @@
 //��͸����ٳ���ʱ��
 #define ShootTimeLower 1000
 //Ħ����ת��rad/s
-#define FricSpeed 520.0f
+#define FricSpeed 435.0f    //520.0f
 //˫���ж�һ�����Ħ���ֽ�����ֵ
 #define FricSpeedReduce 30.0f
 //˫��������ʱ��

@@ -1396,7 +1396,7 @@ I (../Module/power_control.h)(0x67BDCC28)
 I (D:\Keil_v5\ARM\ARMCC\include\math.h)(0x5F63877C)
 I (..\Applications\supercap_task.h)(0x6753EF79)
 I (..\Applications\ins_task.h)(0x6753EF79)
-I (../Module/shoot_task.h)(0x67CBC6B7)
+I (../Module/shoot_task.h)(0x67EEA64F)
 I (../Module/plot.h)(0x6753EF79)
 F (..\Applications\detect_task.c)(0x6753EF79)(--c99 -c --cpu Cortex-M4.fp.sp -g -O1 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Algorithm -I ../Applications -I ../Bsp -I ../Module-I.\RTE\_2025_HERO_FRIC-ID:\Keil_v5\ARM\PACK\ARM\CMSIS\5.7.0\CMSIS\Core\Include-ID:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o 2025_hero_fric\detect_task.o --omf_browse 2025_hero_fric\detect_task.crf --depend 2025_hero_fric\detect_task.d)
 I (..\Applications\detect_task.h)(0x6753EF79)
@@ -1527,7 +1527,7 @@ I (../Module/protocol.h)(0x6753EF79)
 I (../Algorithm/math_lib.h)(0x6753EF79)
 I (D:\Keil_v5\ARM\ARMCC\include\math.h)(0x5F63877C)
 I (..\Applications\detect_task.h)(0x6753EF79)
-I (../Module/shoot_task.h)(0x67CBC6B7)
+I (../Module/shoot_task.h)(0x67EEA64F)
 I (../Module/plot.h)(0x6753EF79)
 I (..\Applications\chassis_task.h)(0x6753EF79)
 I (../Module/servo_task.h)(0x6784CDE4)
@@ -1709,7 +1709,7 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h)(0x66DB20ED)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h)(0x66DB20ED)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h)(0x66DB20ED)
 I (../Core/Inc/usart.h)(0x6753EF79)
-I (../Module/shoot_task.h)(0x67CBC6B7)
+I (../Module/shoot_task.h)(0x67EEA64F)
 I (../Applications/gimbal_task.h)(0x67BD77CB)
 I (../Algorithm/pid.h)(0x6753EF79)
 I (../Module/can_task.h)(0x6780ED3D)
@@ -2189,7 +2189,7 @@ I (../Core/Inc/dma.h)(0x6753EF79)
 I (../Core/Inc/usart.h)(0x6753EF79)
 I (../Applications/chassis_task.h)(0x6753EF79)
 F (..\Module\shoot_task.c)(0x67BD77CB)(--c99 -c --cpu Cortex-M4.fp.sp -g -O1 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Algorithm -I ../Applications -I ../Bsp -I ../Module-I.\RTE\_2025_HERO_FRIC-ID:\Keil_v5\ARM\PACK\ARM\CMSIS\5.7.0\CMSIS\Core\Include-ID:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o 2025_hero_fric\shoot_task.o --omf_browse 2025_hero_fric\shoot_task.crf --depend 2025_hero_fric\shoot_task.d)
-I (..\Module\shoot_task.h)(0x67CBC6B7)
+I (..\Module\shoot_task.h)(0x67EEA64F)
 I (..\Module\struct_typedef.h)(0x6753EF79)
 I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5F63877C)
 I (../Applications/gimbal_task.h)(0x67BD77CB)
