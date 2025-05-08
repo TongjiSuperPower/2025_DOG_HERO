@@ -10,7 +10,7 @@ void fn_servo_pwm_set(uint16_t pwm, uint8_t i)
     {
         case 0:
         {
-            __HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, pwm);
+            __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, pwm);
         }break;
         case 1:
         {
@@ -18,9 +18,13 @@ void fn_servo_pwm_set(uint16_t pwm, uint8_t i)
         }break;
         case 2:
         {
-            __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, pwm);
+            __HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, pwm);
         }break;
         case 3:
+        {
+            __HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_3, pwm);
+        }break;
+        case 4:
         {
             __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, pwm);//别用这个，这个没配
         }break;

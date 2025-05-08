@@ -113,18 +113,18 @@ struct
 #define    IF_KEY_PRESSED_S       ( (ctl.key.v & KEY_PRESSED_OFFSET_S)    != 0 )
 #define    IF_KEY_PRESSED_A       ( (ctl.key.v & KEY_PRESSED_OFFSET_A)    != 0 )
 #define    IF_KEY_PRESSED_D       ( (ctl.key.v & KEY_PRESSED_OFFSET_D)    != 0 )
-#define    IF_KEY_PRESSED_Q       ( (ctl.key.v & KEY_PRESSED_OFFSET_Q)    != 0 )
-#define    IF_KEY_PRESSED_E       ( (ctl.key.v & KEY_PRESSED_OFFSET_E)    != 0 )
-#define    IF_KEY_PRESSED_G       ( (ctl.key.v & KEY_PRESSED_OFFSET_G)    != 0 )
+#define    IF_KEY_PRESSED_Q       ( (ctl.key.v & KEY_PRESSED_OFFSET_Q)    != 0 )    //吊射模式调整图传位置，下移
+#define    IF_KEY_PRESSED_E       ( (ctl.key.v & KEY_PRESSED_OFFSET_E)    != 0 )    //吊射模式调整图传位置，上移
+#define    IF_KEY_PRESSED_G       ( (ctl.key.v & KEY_PRESSED_OFFSET_G)    != 0 )    //摩擦轮预热
 #define    IF_KEY_PRESSED_X       ( (ctl.key.v & KEY_PRESSED_OFFSET_X)    != 0 )	//一键回头
-#define    IF_KEY_PRESSED_Z       ( (ctl.key.v & KEY_PRESSED_OFFSET_Z)    != 0 )	//空
-#define    IF_KEY_PRESSED_C       ( (ctl.key.v & KEY_PRESSED_OFFSET_C)    != 0 )
+#define    IF_KEY_PRESSED_Z       ( (ctl.key.v & KEY_PRESSED_OFFSET_Z)    != 0 )	//shootask中为自爆模式，改成狗洞过洞
+#define    IF_KEY_PRESSED_C       ( (ctl.key.v & KEY_PRESSED_OFFSET_C)    != 0 )    //电容
 #define    IF_KEY_PRESSED_B       ( (ctl.key.v & KEY_PRESSED_OFFSET_B)    != 0 )	//倍镜
-#define    IF_KEY_PRESSED_V       ( (ctl.key.v & KEY_PRESSED_OFFSET_V)    != 0 )
-#define    IF_KEY_PRESSED_F       ( (ctl.key.v & KEY_PRESSED_OFFSET_F)    != 0 )
-#define    IF_KEY_PRESSED_R       ( (ctl.key.v & KEY_PRESSED_OFFSET_R)    != 0 )
-#define    IF_KEY_PRESSED_CTRL    ( (ctl.key.v & KEY_PRESSED_OFFSET_CTRL) != 0 )
-#define    IF_KEY_PRESSED_SHIFT   ( (ctl.key.v & KEY_PRESSED_OFFSET_SHIFT) != 0 )
+#define    IF_KEY_PRESSED_V       ( (ctl.key.v & KEY_PRESSED_OFFSET_V)    != 0 )    //吊射模式图传位置调整与锁定
+#define    IF_KEY_PRESSED_F       ( (ctl.key.v & KEY_PRESSED_OFFSET_F)    != 0 )    //键鼠模式reset
+#define    IF_KEY_PRESSED_R       ( (ctl.key.v & KEY_PRESSED_OFFSET_R)    != 0 )    //键鼠模式UI重绘
+#define    IF_KEY_PRESSED_CTRL    ( (ctl.key.v & KEY_PRESSED_OFFSET_CTRL) != 0 )	//吊射
+#define    IF_KEY_PRESSED_SHIFT   ( (ctl.key.v & KEY_PRESSED_OFFSET_SHIFT) != 0 )	//小陀螺
 
 #endif
 

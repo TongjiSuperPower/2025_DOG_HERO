@@ -18,5 +18,7 @@ void plot3(fp32 value1, fp32 value2, fp32 value3);
 void plot4(fp32 value1, fp32 value2, fp32 value3, fp32 value4);
 void plot5(fp32 value1, fp32 value2, fp32 value3, fp32 value4, fp32 value5);
 void plot6(fp32 value1, fp32 value2, fp32 value3, fp32 value4, fp32 value5, fp32 value6);
+void plot7(fp32 value1, fp32 value2, fp32 value3, fp32 value4, fp32 value5, fp32 value6, fp32 value7);
+
 
 #endif // _PLOT_H

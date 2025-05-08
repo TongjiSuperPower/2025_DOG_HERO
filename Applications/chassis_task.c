@@ -82,36 +82,34 @@ void Chassis_Task(void const * argument){
         //发送电流
         if(chassis_send_num > 1){
             fn_cmd_CAN2ChassisMotor(chassis_motor3508_data[0].given_current,chassis_motor3508_data[1].given_current,chassis_motor3508_data[2].given_current,chassis_motor3508_data[3].given_current);
-            //fn_cmd_CAN2ChassisMotor(0,0,0,0);
+            // fn_cmd_CAN2ChassisMotor(1500,0,0,0);
             chassis_send_num = 0;
         }
         chassis_send_num ++;
         fn_ctrl_DM_motor(0,0,0,0,gimbal_motor4310_data[0].target_torque);
-        //fn_ctrl_DM_motor(0,0,0,0,0);
+        // fn_ctrl_DM_motor(0,0,0,0,0);
         fn_cmd_CAN2TriggerMotor(trigger_motor3508_data[0].given_current,0,0,0);
+        // fn_cmd_CAN2TriggerMotor(test,0,0,0);
         //fn_cmd_CAN2TriggerMotor(0,0,0,0);
 
-        if(send_num > 49){
-            plot4(-gimbal_motor3508_data[0].target_speed,-gimbal_motor3508_data[0].relative_raw_speed,gimbal_motor3508_data[1].target_speed,gimbal_motor3508_data[1].relative_raw_speed);
-			//plot4(gimbal_data.gyro_yaw_target_angle*57.3f,gimbal_data.gyro_pit_target_angle*57.3f,INS_eulers[0]*57.3f,INS_eulers[1]*57.3f);
-					//plot6(ext_power_heat_data.chassis_power,infact_Pmax,ext_power_heat_data.buffer_energy,Pin,w_match,K);
-					//plot3(INS_eulers[0],gimbal_motor4310_data[0].position,fn_RadFormat(INS_eulers[0]-gimbal_motor4310_data[0].position));
-					//plot6(ext_power_heat_data.chassis_power,infact_Pmax,ext_power_heat_data.buffer_energy,cap_data.Capacity,cap_data.Cell_Power,cap_data.Cap_Power);
-					//plot5(ext_power_heat_data.chassis_power,infact_Pmax,ext_power_heat_data.buffer_energy,cap_data.Capacity / 100.0f,cap_num);
-			//plot5(ext_power_heat_data.shooter_17mm_1_barrel_heat,ext_robot_status.shooter_barrel_heat_limit,ext_robot_shoot_data.initial_speed
-			      //,trigger_motor2006_data[0].relative_raw_speed,trigger_motor2006_data[0].target_speed);
-					//plot3(ext_power_heat_data.shooter_17mm_1_barrel_heat,ext_robot_status.shooter_barrel_heat_limit,ext_robot_status.shooter_barrel_cooling_value);
-			//plot6(gimbal_motor3508_data[0].relative_raw_speed,-gimbal_motor3508_data[1].relative_raw_speed,shoot_single_time_count,shooting_single_count,speed,trigger_motor2006_block_flag);
-			//plot4(-chassis_motor3508_data[0].relative_raw_speed,chassis_motor3508_data[1].relative_raw_speed,
-			    //-chassis_motor3508_data[2].relative_raw_speed,chassis_motor3508_data[3].relative_raw_speed);
-			//plot1(gimbal_motor6020_data[0].relative_raw_speed);
-					//plot5(-gimbal_motor3508_data[0].relative_raw_speed,gimbal_motor3508_data[1].relative_raw_speed,-gimbal_motor3508_data[2].relative_raw_speed,FricSpeed,shoot_data.infact_shoot_speed);
-					//plot3(trigger_motor3508_data[0].target_angle,trigger_motor3508_data[0].relative_raw_angle,shoot_data.infact_shoot_speed);
-        //   plot3(gimbal_data.gyro_pit_target_angle, autoaim_measure.pitch,gimbal_motormi_measure[0].ecd);  
-        //plot6(INS_quat[1],INS_quat[2],INS_quat[3],INS_quat[0],gimbal_motormi_measure[0].ecd, autoaim_measure.pitch);
-					//plot4(INS_eulers[0],gimbal_data.gyro_pit_target_angle,INS_eulers[1],gimbal_data.gyro_yaw_target_angle);
-					//plot3(gimbal_motormi_data[0].offecd_ecd,gimbal_motormi_measure[0].ecd,gimbal_motormi_data[0].given_current);
-        send_num = 0;
+        if(send_num > 19){
+		    //plot7(gimbal_data.gyro_yaw_target_angle,INS_eulers[0],gimbal_data.GimbalIMUYawPid1.f_Pout,gimbal_data.GimbalIMUYawPid1.f_Iout,gimbal_data.GimbalIMUYawPid1.f_Dout,gimbal_data.f_GimbalYawPidMid,INS_gyro[2]);
+			// plot6(gimbal_data.f_GimbalYawPidMid,INS_gyro[2],gimbal_data.GimbalIMUYawPid2.f_Pout,gimbal_data.GimbalIMUYawPid2.f_Iout,gimbal_data.GimbalIMUYawPid2.f_Dout,gimbal_motor4310_data[0].target_torque);
+            // plot6(gimbal_data.gyro_pit_target_angle,INS_eulers[1], gimbal_data.GimbalIMUPitPid1.f_Pout,gimbal_data.GimbalIMUPitPid1.f_Iout,gimbal_data.GimbalIMUPitPid2.f_Dout,gimbal_data.GimbalIMUPitPid1.f_Out);
+            // plot6(gimbal_data.f_GimbalPitPidMid,INS_gyro[0],gimbal_data.GimbalIMUPitPid2.f_Pout,gimbal_data.GimbalIMUPitPid2.f_Iout,gimbal_data.GimbalIMUPitPid2.f_Dout,gimbal_data.GimbalIMUPitPid2.f_Out);
+            // plot6(gimbal_data.gyro_pit_angle_add,gimbal_data.gyro_pit_target_angle,gimbal_motormi_data[0].relative_raw_angle,gimbal_data.GimbalIMUPitPid1.f_Iout,gimbal_data.GimbalIMUPitPid2.f_Dout,gimbal_data.GimbalIMUPitPid1.f_Out);
+            // plot6(gimbal_motormi_data[0].given_current,gimbal_motormi_measure[0].given_current,gimbal_data.GimbalIMUPitPid2.f_Pout,gimbal_data.GimbalIMUPitPid2.f_Iout,gimbal_data.GimbalIMUPitPid2.f_Dout,gimbal_data.GimbalIMUPitPid2.f_Out);
+            // plot7(trigger_motor3508_data[0].double_pid_mid,trigger_motor3508_data[0].filter_speed[0],trigger_motor3508_data[0].motor_pid1.f_Pout,trigger_motor3508_data[0].motor_pid1.f_Iout,trigger_motor3508_data[0].motor_pid1.f_Dout,trigger_motor3508_data[0].target_angle,trigger_motor3508_data[0].relative_raw_angle);
+            // plot7(trigger_motor3508_data[0].target_angle,trigger_motor3508_data[0].relative_raw_angle,trigger_motor3508_data[0].motor_pid2.f_Pout,trigger_motor3508_data[0].motor_pid2.f_Iout,trigger_motor3508_data[0].motor_pid2.f_Dout,trigger_motor3508_data[0].double_pid_mid,trigger_motor3508_data[0].filter_speed[0]);
+            // plot6(gimbal_motor4310_data[0].p_int,gimbal_motor4310_data[0].raw_position,gimbal_motor4310_data[0].offecd_angle,gimbal_data.gyro_yaw_target_angle,INS_eulers[0],gimbal_motor4310_data[0].position);
+            // plot2(shoot_data.shoot_permission_flag,gimbal_motor3508_measure[0].speed_rpm);
+            // plot1(gimbal_motormi_data[0].relative_raw_angle);
+            //plot2(gimbal_motor3508_data[0].raw_speed,gimbal_motor4310_data[0].raw_position);
+            // plot3(gimbal_motor3508_data[0].relative_raw_speed,gimbal_motor3508_data[1].relative_raw_speed,INS_eulers[0]);
+            // plot4(-chassis_motor3508_data[0].relative_raw_speed,chassis_motor3508_data[1].relative_raw_speed,chassis_motor3508_data[2].relative_raw_speed,-chassis_motor3508_data[3].relative_raw_speed);
+            // plot3(shoot_data.infact_shoot_speed,gimbal_motor3508_data[0].relative_raw_speed,gimbal_motor3508_data[1].relative_raw_speed);
+            plot3(gimbal_motormi_data->relative_raw_angle,INS_eulers[1],-INS_eulers[1]-0.06142f);
+            send_num = 0;
 				}
         send_num++;
 
@@ -208,8 +206,9 @@ void fn_ChassisMode(void){
     if(!IF_RC_SW2_MID){
         if(IF_RC_SW2_UP && gimbal_data.gimbal_behaviour != GIMBAL_INIT){
             chassis_move_data.chassis_mode = chassis_follow;
+            // chassis_move_data.chassis_mode = chassis_not_follow;
         }
-        if(IF_RC_SW2_UP && ctl.rc.k0 >= 1500 && gimbal_data.gimbal_behaviour != GIMBAL_INIT){
+        if(IF_RC_SW2_UP && (ctl.rc.k0 >= 1500 || ctl.rc.k0 <= 500) && gimbal_data.gimbal_behaviour != GIMBAL_INIT){
             chassis_move_data.chassis_mode = chassis_spin;
         }
     }
@@ -382,6 +381,7 @@ void fn_ChassisMove(void){
         
         //底盘跟随角速度
         chassis_move_data.w_set = -fn_PidClacAngle(&chassis_move_data.motor_pid1,gimbal_motor4310_data[0].position,chassis_move_data.chassis_relative_angle_set);
+        // chassis_move_data.w_set = 0.0f;
         //中心死区
         if(-ZeroW < chassis_move_data.w_set && chassis_move_data.w_set < ZeroW){
             chassis_move_data.w_set = 0.0f;
@@ -515,7 +515,17 @@ void fn_ChassisMove(void){
 		}
         
         //赋值角速度
-        chassis_move_data.w_set = w_match;
+        if(ctl.rc.k0 >= 1500)
+        {
+            chassis_move_data.w_set = w_match;
+        }
+        else if(ctl.rc.k0 <= 500)
+        {
+            chassis_move_data.w_set = -w_match;
+        }
+        else{
+            chassis_move_data.w_set = w_match;
+        }
 
         //平移速度
         if(IF_RC_SW2_UP){

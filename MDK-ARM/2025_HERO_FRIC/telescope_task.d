@@ -1,12 +1,12 @@
 2025_hero_fric\telescope_task.o: ..\Applications\telescope_task.c
 2025_hero_fric\telescope_task.o: ..\Applications\telescope_task.h
 2025_hero_fric\telescope_task.o: ../Module/struct_typedef.h
-2025_hero_fric\telescope_task.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+2025_hero_fric\telescope_task.o: D:\Software\Keil_5\ARM\ARMCC\Bin\..\include\stdint.h
 2025_hero_fric\telescope_task.o: ../Algorithm/pid.h
 2025_hero_fric\telescope_task.o: ../Algorithm/math_lib.h
 2025_hero_fric\telescope_task.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 2025_hero_fric\telescope_task.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-2025_hero_fric\telescope_task.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+2025_hero_fric\telescope_task.o: D:\Software\Keil_5\ARM\ARMCC\Bin\..\include\stddef.h
 2025_hero_fric\telescope_task.o: ../Core/Inc/FreeRTOSConfig.h
 2025_hero_fric\telescope_task.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 2025_hero_fric\telescope_task.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
@@ -21,6 +21,7 @@
 2025_hero_fric\telescope_task.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
 2025_hero_fric\telescope_task.o: ../Module/can_task.h
 2025_hero_fric\telescope_task.o: ../Applications/gimbal_task.h
+2025_hero_fric\telescope_task.o: ../Applications/chassis_task.h
 2025_hero_fric\telescope_task.o: ../Core/Inc/can.h
 2025_hero_fric\telescope_task.o: ../Core/Inc/main.h
 2025_hero_fric\telescope_task.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h
@@ -54,4 +55,3 @@
 2025_hero_fric\telescope_task.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 2025_hero_fric\telescope_task.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 2025_hero_fric\telescope_task.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
-2025_hero_fric\telescope_task.o: ..\Applications\chassis_task.h

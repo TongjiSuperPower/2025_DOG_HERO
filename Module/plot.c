@@ -71,3 +71,18 @@ void plot6(fp32 value1, fp32 value2, fp32 value3, fp32 value4, fp32 value5, fp32
     plot_frame.data[5] = value6;
     HAL_UART_Transmit(&huart1, (uint8_t *)&plot_frame, 3 + plot_frame.size, 100);
 }
+
+void plot7(fp32 value1, fp32 value2, fp32 value3, fp32 value4, fp32 value5, fp32 value6, fp32 value7)
+{
+    plot_frame.start[0] = 0xaa;
+    plot_frame.start[1] = 0xbb;
+    plot_frame.size = 4 * 7;
+    plot_frame.data[0] = value1;
+    plot_frame.data[1] = value2;
+    plot_frame.data[2] = value3;
+    plot_frame.data[3] = value4;
+    plot_frame.data[4] = value5;
+    plot_frame.data[5] = value6;
+    plot_frame.data[6] = value7;
+    HAL_UART_Transmit(&huart1, (uint8_t *)&plot_frame, 3 + plot_frame.size, 100);
+}

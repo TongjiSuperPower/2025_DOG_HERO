@@ -17,6 +17,13 @@
 #include "bsp_tim.h"
 #include "stdbool.h"
 
+//调试用参数
+fp32 test_torque;
+fp32 test_position;
+
+fp32 gravity_angle = 0.0f; 
+fp32 gravity_torque = 0.0f;
+
 //射击数据发送频率控制符
 uint16_t shoot_mode_sned_num;
 uint16_t q_send_num;
@@ -40,6 +47,8 @@ uint16_t turnover_cold_time;
 uint8_t shoot_mode_flag;
 //云台进入zero_force后低重力补偿持续时间
 uint16_t gimbal_into_zero_force_time;
+//记录z键状态
+uint16_t last_z_key = 0;
 
 //static int16_t last_key_pressed_C = 0;
 
@@ -81,12 +90,15 @@ void Gimbal_Task(void const * argument){
     fn_shoot_init();
 
     //读取pitch零点
-    //fn_get_pitch_zero_encode();
+    fn_get_pitch_zero_encode();
 
     //副pitch初始化
-    //fn_secondpitch_servo_init();
+    fn_secondpitch_servo_init();
+    fn_basepitch_servo_init();
 
     while(1){
+        // //YAW轴达妙电机初始化
+	    // fn_DM_start_motor();
 
         //遥控器数据出错或翻车则停掉电机
         while(remote_control_data_error_flag || rollover_flag){
@@ -112,12 +124,13 @@ void Gimbal_Task(void const * argument){
         //副pitch舵机选择模式
         fn_setmode_secondpitch();
 
-        //计算副pitch舵机pwm
+        //计算舵机pwm
         fn_setpwm_secondpitch();
+        fn_setpwm_basepitch();
         
         //给上位机发送射击数据 50Hz
         if(shoot_mode_sned_num > 19){
-            fn_cmd_shoot_data_to_computer(ext_robot_shoot_data.initial_speed,shoot_mode_flag);
+            fn_cmd_shoot_data_to_computer(ext_robot_shoot_data.initial_speed,chassis_move_data.chassis_mode);
             shoot_mode_sned_num = 0;
         }
         shoot_mode_sned_num++;
@@ -131,16 +144,20 @@ void Gimbal_Task(void const * argument){
 				
 				
         if(fric_send_num > 1){
-            fn_cmd_CAN1GimbalMotor1(gimbal_motor3508_data[0].given_current,gimbal_motor3508_data[1].given_current,gimbal_motor3508_data[2].given_current,0);
-            
+            fn_cmd_CAN1GimbalMotor1(gimbal_motor3508_data[0].given_current,gimbal_motor3508_data[1].given_current,0,0);            
             fric_send_num = 0;
         }
         fric_send_num ++;
 		motor_mi_controlmode(gimbal_motormi_data[0].given_current,0,0,0,0);
+		// motor_mi_controlmode(test_torque,test_position,0,0,0); 
         
+        // fn_cmd_CAN1GimbalMotor1(1500,gimbal_motor3508_data[1].given_current,0,0);            
+        
+
         if(servo_send_num > 100)
         {
             fn_servo_pwm_set(secondpitch_servo.pwm_set, secondpitch_servo.channel);
+            fn_servo_pwm_set(basepitch_servo.pwm_set, basepitch_servo.channel);
             servo_send_num = 0;
         }
         servo_send_num++;
@@ -202,17 +219,17 @@ void fn_GimbalInit(void){
     gimbal_data.gimbal_motor_pit_mode = GIMBAL_Motor_DOWN;
 
 
-    fn_PidInit(&gimbal_data.GimbalIMUYawPid1,af_GimbalIMUPosPid1[0],chassis_motor3508_min_out,chassis_motor3508_max_out,chassis_motor3508_min_iout,chassis_motor3508_max_iout);
-    fn_PidInit(&gimbal_data.GimbalIMUYawPid2,af_GimbalIMUPosPid2[0],GimbalPidYawMinOut,GimbalPidYawMaxOut,GimbalPidYawMinIOut,GimbalPidYawMaxIOut);
+    fn_PidInit(&gimbal_data.GimbalIMUYawPid1,af_GimbalIMUPosPid1[0],GimbalPid1YawMinOut,GimbalPid1YawMaxOut,GimbalPid1YawMinIOut,GimbalPid1YawMaxIOut);
+    fn_PidInit(&gimbal_data.GimbalIMUYawPid2,af_GimbalIMUPosPid2[0],GimbalPid2YawMinOut,GimbalPid2YawMaxOut,GimbalPid2YawMinIOut,GimbalPid2YawMaxIOut);
 
-    fn_PidInit(&gimbal_data.GimbalIMUPitPid1,af_GimbalIMUPosPid1[1],chassis_motor3508_min_out,chassis_motor3508_max_out,chassis_motor3508_min_iout,chassis_motor3508_max_iout);
-    fn_PidInit(&gimbal_data.GimbalIMUPitPid2,af_GimbalIMUPosPid2[1],GimbalPidPitMinOut,GimbalPidPitMaxOut,GimbalPidPitMinIOut,GimbalPidPitMaxIOut);
+    fn_PidInit(&gimbal_data.GimbalIMUPitPid1,af_GimbalIMUPosPid1[1],GimbalPid1PitMinOut,GimbalPid1PitMaxOut,GimbalPid1PitMinIOut,GimbalPid1PitMaxIOut);
+    fn_PidInit(&gimbal_data.GimbalIMUPitPid2,af_GimbalIMUPosPid2[1],GimbalPid2PitMinOut,GimbalPid2PitMaxOut,GimbalPid2PitMinIOut,GimbalPid2PitMaxIOut);
 
-    fn_PidInit(&gimbal_data.GimbalIMUYawAutoaimPid1,af_GimbalIMUPosAutoaimPid1[0],chassis_motor3508_min_out,chassis_motor3508_max_out,chassis_motor3508_min_iout,chassis_motor3508_max_iout);
-    fn_PidInit(&gimbal_data.GimbalIMUYawAutoaimPid2,af_GimbalIMUPosAutoaimPid2[0],GimbalPidYawMinOut,GimbalPidYawMaxOut,GimbalPidYawMinIOut,GimbalPidYawMaxIOut);
+    fn_PidInit(&gimbal_data.GimbalIMUYawAutoaimPid1,af_GimbalIMUPosAutoaimPid1[0],GimbalPid1YawMinOut,GimbalPid1YawMaxOut,GimbalPid1YawMinIOut,GimbalPid1YawMaxIOut);
+    fn_PidInit(&gimbal_data.GimbalIMUYawAutoaimPid2,af_GimbalIMUPosAutoaimPid2[0],GimbalPid2YawMinOut,GimbalPid2YawMaxOut,GimbalPid2YawMinIOut,GimbalPid2YawMaxIOut);
 
-    fn_PidInit(&gimbal_data.GimbalIMUPitAutoaimPid1,af_GimbalIMUPosAutoaimPid1[1],chassis_motor3508_min_out,chassis_motor3508_max_out,chassis_motor3508_min_iout,chassis_motor3508_max_iout);
-    fn_PidInit(&gimbal_data.GimbalIMUPitAutoaimPid2,af_GimbalIMUPosAutoaimPid2[1],GimbalPidPitMinOut,GimbalPidPitMaxOut,GimbalPidPitMinIOut,GimbalPidPitMaxIOut);
+    fn_PidInit(&gimbal_data.GimbalIMUPitAutoaimPid1,af_GimbalIMUPosAutoaimPid1[1],GimbalPid1PitMinOut,GimbalPid1PitMaxOut,GimbalPid1PitMinIOut,GimbalPid1PitMaxIOut);
+    fn_PidInit(&gimbal_data.GimbalIMUPitAutoaimPid2,af_GimbalIMUPosAutoaimPid2[1],GimbalPid2PitMinOut,GimbalPid2PitMaxOut,GimbalPid2PitMinIOut,GimbalPid2PitMaxIOut);
 }
 
 //云台电机初始化函数
@@ -231,12 +248,12 @@ void fn_GimbalMotorInit(void){
     gimbal_motor4310_data[0].round_num = 0;
     gimbal_motor4310_data[0].target_angle = 0.0f;
     gimbal_motor4310_data[0].target_torque = 0.0f;
-    gimbal_motor4310_data[0].offecd_angle = -2.84946108f;
+    gimbal_motor4310_data[0].offecd_angle = 1.32408571f;// 1.32408571
 																			
 
     gimbal_motor4310_data[0].double_pid_mid = 0.0f;
-    fn_PidInit(&gimbal_motor4310_data[0].motor_pid1,af_GimbalMotorPosPid1[0],chassis_motor3508_min_out,chassis_motor3508_max_out,chassis_motor3508_min_iout,chassis_motor3508_max_iout);
-	fn_PidInit(&gimbal_motor4310_data[0].motor_pid2,af_GimbalMotorPosPid2[0],GimbalPidYawMinOut,GimbalPidYawMaxOut,GimbalPidYawMinIOut,GimbalPidYawMaxIOut);
+    fn_PidInit(&gimbal_motor4310_data[0].motor_pid1,af_GimbalMotorPosPid1[0],GimbalPid1YawMinOut,GimbalPid1YawMaxOut,GimbalPid1YawMinIOut,GimbalPid1YawMaxIOut);
+	fn_PidInit(&gimbal_motor4310_data[0].motor_pid2,af_GimbalMotorPosPid2[0],GimbalPid2YawMinOut,GimbalPid2YawMaxOut,GimbalPid2YawMinIOut,GimbalPid2YawMaxIOut);
 
     //PIT小米电机
     init_cybergear(0);
@@ -259,27 +276,27 @@ void fn_GimbalMotorInit(void){
     gimbal_motormi_data[0].given_current = 0.0f;           
     gimbal_motormi_data[0].double_pid_mid = 0.0f;
 		
-    fn_PidInit(&gimbal_motormi_data[0].motor_pid1,af_GimbalMotorPosPid1[1],chassis_motor3508_min_out,chassis_motor3508_max_out,chassis_motor3508_min_iout,chassis_motor3508_max_iout);
-	fn_PidInit(&gimbal_motormi_data[0].motor_pid2,af_GimbalMotorPosPid2[1],GimbalPidPitMinOut,GimbalPidPitMaxOut,GimbalPidPitMinIOut,GimbalPidPitMaxIOut);
+    fn_PidInit(&gimbal_motormi_data[0].motor_pid1,af_GimbalMotorPosPid1[1],GimbalPid1PitMinOut,GimbalPid1PitMaxOut,GimbalPid1PitMinIOut,GimbalPid1PitMaxIOut); //小米电机iout限幅修改
+	fn_PidInit(&gimbal_motormi_data[0].motor_pid2,af_GimbalMotorPosPid2[1],GimbalPid2PitMinOut,GimbalPid2PitMaxOut,GimbalPid2PitMinIOut,GimbalPid2PitMaxIOut);
 
 }
 
 void fn_get_pitch_zero_encode(void){
-    // gimbal_motormi_data[0].offecd_ecd = 34130;
-	  uint16_t delay = 0;
-    while(delay < 300){
-        motor_mi_controlmode(-0.5f,0,0,0,0);
-	    if(fabs(gimbal_motormi_data[0].relative_raw_speed) < 0.5f && gimbal_motormi_measure[0].ecd != 0){
-		    delay++;
-	    }
-        else{
-            delay = 0;
-        }
-        if(delay == 200){
-            gimbal_motormi_data[0].offecd_ecd = gimbal_motormi_measure[0].ecd + 910;
-        }
-        vTaskDelay(1);
-    }
+    gimbal_motormi_data[0].offecd_ecd = 34750;//32500 34750
+	//   uint16_t delay = 0;
+    // while(delay < 300){
+    //     motor_mi_controlmode(-0.5f,0,0,0,0);
+	//     if(fabs(gimbal_motormi_data[0].relative_raw_speed) < 0.5f && gimbal_motormi_measure[0].ecd != 0){
+	// 	    delay++;
+	//     }
+    //     else{
+    //         delay = 0;
+    //     }
+    //     if(delay == 200){
+    //         gimbal_motormi_data[0].offecd_ecd = gimbal_motormi_measure[0].ecd + 910;
+    //     }
+    //     vTaskDelay(1);
+    // }
 }
 
 //云台状态选择
@@ -304,6 +321,7 @@ void fn_GimbalMode(void){
         if(IF_RC_SW2_UP){
             gimbal_data.last_gimbal_behaviour = gimbal_data.gimbal_behaviour;
             gimbal_data.gimbal_behaviour = GIMBAL_GYRO;
+			// gimbal_data.gimbal_behaviour = GIMBAL_ENCONDE;
             shoot_mode_flag = 0;
         }
     }
@@ -311,17 +329,35 @@ void fn_GimbalMode(void){
     //键鼠 长按鼠标右键自瞄 只长按B打符
     if(IF_RC_SW2_MID){
         gimbal_data.last_gimbal_behaviour = gimbal_data.gimbal_behaviour;
-        //gimbal_data.gimbal_behaviour = GIMBAL_AUTO;
-        if(!IF_MOUSE_PRESSED_RIGHT){
+
+        if(!IF_MOUSE_PRESSED_RIGHT && !IF_KEY_PRESSED_Z && gimbal_data.gimbal_behaviour != GIMBAL_PASS){
+            gimbal_data.last_gimbal_behaviour = gimbal_data.gimbal_behaviour;
+            gimbal_data.gimbal_behaviour = GIMBAL_GYRO;
+			// gimbal_data.gimbal_behaviour = GIMBAL_ENCONDE;
+            shoot_mode_flag = 0;
+        }
+        //按下Ｚ键进入过洞模式
+        else if(IF_KEY_PRESSED_Z && !last_z_key && gimbal_data.gimbal_behaviour == GIMBAL_GYRO)
+        {
+            gimbal_data.last_gimbal_behaviour = gimbal_data.gimbal_behaviour;
+            gimbal_data.gimbal_behaviour = GIMBAL_PASS;
+            shoot_mode_flag = 0;
+            last_z_key = ctl.key.v & KEY_PRESSED_OFFSET_Z;
+        }
+        else if(IF_KEY_PRESSED_Z && !last_z_key && gimbal_data.gimbal_behaviour == GIMBAL_PASS)
+        {
             gimbal_data.last_gimbal_behaviour = gimbal_data.gimbal_behaviour;
             gimbal_data.gimbal_behaviour = GIMBAL_GYRO;
             shoot_mode_flag = 0;
+            last_z_key = ctl.key.v & KEY_PRESSED_OFFSET_Z;
         }
         //按下右键时判定为自瞄模式
-        else{
+        else if (IF_MOUSE_PRESSED_RIGHT)
+        {
             gimbal_data.last_gimbal_behaviour = gimbal_data.gimbal_behaviour;
             gimbal_data.gimbal_behaviour = GIMBAL_AUTO;
         }
+        last_z_key = ctl.key.v & KEY_PRESSED_OFFSET_Z;
     }
     
     //判断是否进入回中模式
@@ -362,6 +398,10 @@ void fn_MotorMode(void){
         gimbal_data.gimbal_motor_yaw_mode = GIMBAL_MOTOR_GYRO;
         gimbal_data.gimbal_motor_pit_mode = GIMBAL_MOTOR_GYRO;
     }
+    if(gimbal_data.gimbal_behaviour == GIMBAL_PASS){
+        gimbal_data.gimbal_motor_yaw_mode = GIMBAL_MOTOR_GYRO;
+        gimbal_data.gimbal_motor_pit_mode = GIMBAL_MOTOR_GYRO;
+    }
 }
 
 //云台电流解算
@@ -383,11 +423,11 @@ void fn_GimbalMove(void){
     }
         
     //电机模式为GYRO
-    if(gimbal_data.gimbal_motor_yaw_mode == GIMBAL_MOTOR_GYRO && gimbal_data.gimbal_motor_pit_mode == GIMBAL_MOTOR_GYRO){
+    if(gimbal_data.gimbal_motor_yaw_mode == GIMBAL_MOTOR_GYRO && (gimbal_data.gimbal_motor_pit_mode == GIMBAL_MOTOR_GYRO || gimbal_data.gimbal_motor_pit_mode == GIMBAL_MOTOR_PASS)){
         //遥控器
         if(!IF_RC_SW2_MID){
             //陀螺仪控云台
-            if(gimbal_data.gimbal_behaviour == GIMBAL_GYRO){
+            if(gimbal_data.gimbal_behaviour == GIMBAL_GYRO || gimbal_data.gimbal_behaviour == GIMBAL_PASS){
                 //获取角速度
                 gimbal_data.gyro_yaw_angle_add = -(float)(ctl.rc.ch2 - 1024) / 660.0f * WMax;
                 gimbal_data.gyro_pit_angle_add = -(float)(ctl.rc.ch3 - 1024) / 660.0f * WMax;
@@ -396,11 +436,26 @@ void fn_GimbalMove(void){
                     if(fabs(-gimbal_motormi_data[0].relative_raw_angle + gimbal_data.gyro_pit_angle_add) > fabs(-gimbal_motormi_data[0].relative_raw_angle)){
                         gimbal_data.gyro_pit_angle_add = 0.0f;
                     }
+
+                    //只有一开始就在限幅的范围内时才会生效，一开始就在限幅外的话由于增量很小会使增量一直被置零造成无法运动，需要通过encode模式把当前角度拉到限幅范围内
                 }
+                // if(((INS_eulers[1] + gimbal_data.gyro_pit_angle_add) <= PitAngleMin )||( (INS_eulers[1] + gimbal_data.gyro_pit_angle_add ) >= PitAngleMax))
+                // {
+                //     gimbal_data.gyro_pit_angle_add = 0;
+                // }
                 //赋值目标角度
                 gimbal_data.gyro_yaw_target_angle = fn_RadFormat(gimbal_data.gyro_yaw_target_angle + gimbal_data.gyro_yaw_angle_add);
                 gimbal_data.gyro_pit_target_angle = fn_RadFormat(gimbal_data.gyro_pit_target_angle + gimbal_data.gyro_pit_angle_add);
 
+                // if((-gimbal_data.gyro_pit_target_angle - OffsetAngle) <= PitAngleMin)
+                // {
+                //     gimbal_data.gyro_pit_target_angle = PitAngleMin; 
+                // }
+                // else if ((-gimbal_data.gyro_pit_target_angle - OffsetAngle) >= PitAngleMax)
+                // {
+                //     gimbal_data.gyro_pit_target_angle = PitAngleMax;
+                // }
+            
                 //解算GYRO模式下两轴电流
                 gimbal_data.f_GimbalYawPidMid = fn_PidClacAngle(&gimbal_data.GimbalIMUYawPid1,INS_eulers[0], gimbal_data.gyro_yaw_target_angle);
                 gimbal_motor4310_data[0].target_torque = fn_PidClac(&gimbal_data.GimbalIMUYawPid2,INS_gyro[2],gimbal_data.f_GimbalYawPidMid);
@@ -419,9 +474,8 @@ void fn_GimbalMove(void){
             static bool KEY_A_PRESSED = false;
             static bool KEY_D_PRESSED = false;
             static bool KEY_Q_PRESSED = false;
-            static bool KEY_E_PRESSED = false;
-            //陀螺仪控云台
-            if(gimbal_data.gimbal_behaviour == GIMBAL_GYRO){
+            static bool KEY_E_PRESSED = false;            //陀螺仪控云台
+            if(gimbal_data.gimbal_behaviour == GIMBAL_GYRO || gimbal_data.gimbal_behaviour == GIMBAL_PASS){
                 if(chassis_move_data.chassis_mode == chassis_not_follow){
 
                     if(IF_KEY_PRESSED_W || IF_KEY_PRESSED_S){
@@ -455,10 +509,10 @@ void fn_GimbalMove(void){
                         KEY_D_PRESSED = false;
                         gimbal_data.gyro_yaw_angle_add = 0.0f;
                     }
-                }
+                }              
                 else{
                     gimbal_data.gyro_yaw_angle_add = -MOUSE_X_MOVE_SPEED * WCoef;
-                    gimbal_data.gyro_pit_angle_add = MOUSE_Y_MOVE_SPEED * WCoef;
+                    gimbal_data.gyro_pit_angle_add = -MOUSE_Y_MOVE_SPEED * WCoef;
                 }
                 //掉头冷却减少
                 if(turnover_cold_time > 0){
@@ -502,6 +556,16 @@ void fn_GimbalMove(void){
                 gimbal_data.gyro_yaw_target_angle = fn_RadFormat(gimbal_data.gyro_yaw_target_angle + gimbal_data.gyro_yaw_angle_add);
                 gimbal_data.gyro_pit_target_angle = fn_RadFormat(gimbal_data.gyro_pit_target_angle + gimbal_data.gyro_pit_angle_add);
                 }
+
+                // if((-gimbal_data.gyro_pit_target_angle - OffsetAngle) <= PitAngleMin)
+                // {
+                //     gimbal_data.gyro_pit_target_angle = PitAngleMin; 
+                // }
+                // else if ((-gimbal_data.gyro_pit_target_angle - OffsetAngle) >= PitAngleMax)
+                // {
+                //     gimbal_data.gyro_pit_target_angle = PitAngleMax;
+                // }
+
                 //解算GYRO模式下两轴电流
                 gimbal_data.f_GimbalYawPidMid = fn_PidClacAngle(&gimbal_data.GimbalIMUYawPid1,INS_eulers[0], gimbal_data.gyro_yaw_target_angle);
                 gimbal_motor4310_data[0].target_torque = fn_PidClac(&gimbal_data.GimbalIMUYawPid2,INS_gyro[2],gimbal_data.f_GimbalYawPidMid);
@@ -558,7 +622,7 @@ void fn_GimbalMove(void){
 
             //赋予目标角度
             gimbal_motor4310_data[0].target_angle = chassis_move_data.chassis_relative_angle_set;
-            gimbal_motormi_data[0].target_angle = 0.0f;
+            gimbal_motormi_data[0].target_angle = 0.0f; //设置电机回中时的角度
                     
             //判断是否已经回中
             if((fabs(fn_RadFormat(gimbal_motor4310_data[0].position - chassis_move_data.chassis_relative_angle_set))) < 0.05f && (fabs(gimbal_motormi_data[0].relative_raw_angle - 0.0f) < 0.05f)){
@@ -584,8 +648,114 @@ void fn_GimbalMove(void){
                                                 gimbal_motor4310_data[0].velocity,gimbal_motor4310_data[0].double_pid_mid);
         gimbal_motormi_data[0].double_pid_mid = fn_PidClacAngle(&gimbal_motormi_data[0].motor_pid1,
                                                 gimbal_motormi_data[0].relative_raw_angle,gimbal_motormi_data[0].target_angle);
-        gimbal_motormi_data[0].given_current = fn_PidClac(&gimbal_motormi_data[0].motor_pid2,
-                                                gimbal_motormi_data[0].relative_raw_speed,gimbal_motormi_data[0].double_pid_mid)
+        gimbal_motormi_data[0].given_current = fn_PidClac(&gimbal_motormi_data[0].motor_pid2,gimbal_motormi_data[0].relative_raw_speed,gimbal_motormi_data[0].double_pid_mid)
                                                 + sin(PI / 2.0f - OFFSET_ANGLE + gimbal_motormi_data[0].relative_raw_angle) * Tor_param;
+        // gimbal_motormi_data[0].given_current = sin(PI / 2.0f - gravity_angle + gimbal_motormi_data[0].relative_raw_angle) * gravity_torque;
     }
 }
+
+    // //电机模式为过洞模式
+    // if (gimbal_data.gimbal_motor_yaw_mode == GIMBAL_MOTOR_GYRO && gimbal_data.gimbal_motor_pit_mode == GIMBAL_MOTOR_PASS)
+    // {
+    //     //键鼠
+    //     if(IF_RC_SW2_MID){
+    //         // 记录按键的状态
+    //        static bool KEY_W_PRESSED = false;
+    //        static bool KEY_S_PRESSED = false;
+    //        static bool KEY_A_PRESSED = false;
+    //        static bool KEY_D_PRESSED = false;
+    //        static bool KEY_Q_PRESSED = false;
+    //        static bool KEY_E_PRESSED = false;            //陀螺仪控云台
+    //        if(gimbal_data.gimbal_behaviour == GIMBAL_GYRO){
+    //            if(chassis_move_data.chassis_mode == chassis_not_follow){
+
+    //                if(IF_KEY_PRESSED_W || IF_KEY_PRESSED_S){
+    //                    if(IF_KEY_PRESSED_W && !KEY_W_PRESSED){
+    //                        gimbal_data.gyro_pit_angle_add = WCoef * 0.5f;
+    //                        KEY_W_PRESSED = true;
+    //                    }
+    //                    else if(IF_KEY_PRESSED_S && !KEY_S_PRESSED){
+    //                        gimbal_data.gyro_pit_angle_add = -WCoef * 0.5f;
+    //                        KEY_S_PRESSED = true;
+    //                    }
+    //                }
+    //                else{
+    //                    KEY_W_PRESSED = false;
+    //                    KEY_S_PRESSED = false;
+    //                    gimbal_data.gyro_pit_angle_add = 0.0f;
+    //                }
+
+    //                if(IF_KEY_PRESSED_A || IF_KEY_PRESSED_D){
+    //                    if(IF_KEY_PRESSED_A && !KEY_A_PRESSED){
+    //                        gimbal_data.gyro_yaw_angle_add = WCoef * 0.5f;
+    //                        KEY_A_PRESSED = true;
+    //                    }
+    //                    else if(IF_KEY_PRESSED_D && !KEY_D_PRESSED){
+    //                        gimbal_data.gyro_yaw_angle_add = -WCoef * 0.5f;
+    //                        KEY_D_PRESSED = true;
+    //                    }
+    //                }
+    //                else{
+    //                    KEY_A_PRESSED = false;
+    //                    KEY_D_PRESSED = false;
+    //                    gimbal_data.gyro_yaw_angle_add = 0.0f;
+    //                }
+    //            }              
+    //            else{
+    //                gimbal_data.gyro_yaw_angle_add = -MOUSE_X_MOVE_SPEED * WCoef;
+    //                gimbal_data.gyro_pit_angle_add = -MOUSE_Y_MOVE_SPEED * WCoef;
+    //            }
+    //            //掉头冷却减少
+    //            if(turnover_cold_time > 0){
+    //                turnover_cold_time--;
+    //            }
+    //            if(IF_KEY_PRESSED_Q && !KEY_Q_PRESSED && chassis_move_data.chassis_mode == chassis_follow){
+    //                gimbal_data.gyro_yaw_angle_add = WCoef * 70;
+    //            }
+    //            if(IF_KEY_PRESSED_E && !KEY_E_PRESSED && chassis_move_data.chassis_mode == chassis_follow){
+    //                gimbal_data.gyro_yaw_angle_add = -WCoef * 70;
+    //            }
+    //            //按下X键回头
+    //            if(IF_KEY_PRESSED_X && turnover_cold_time == 0){
+    //                gimbal_data.gyro_yaw_angle_add = PI;
+    //                turnover_cold_time = TurnOverColdTime;
+    //            }
+    //            //pitch轴限角 暂时未考虑底盘斜置于斜坡上的情况即yaw轴对pitch角度的影响与pitch轴角度自增带来的超出限位情况以及自增超范围的情况
+    //            if(fn_scope_judgment(gimbal_motormi_data[0].relative_raw_angle,PitAngleMin,PitAngleMax)){
+    //                if(fabs(-gimbal_motormi_data[0].relative_raw_angle + gimbal_data.gyro_pit_angle_add) > fabs(-gimbal_motormi_data[0].relative_raw_angle)){
+    //                    gimbal_data.gyro_pit_angle_add = 0.0f;
+    //                }
+    //            }
+
+    //            //限制yaw轴角度增量
+    //            if (gimbal_data.gyro_yaw_angle_add >= 3.2f) {
+    //                gimbal_data.gyro_yaw_angle_add = 3.2f;
+    //            }
+    //            else if(gimbal_data.gyro_yaw_angle_add <= -3.2f){
+    //                gimbal_data.gyro_yaw_angle_add = -3.2f;
+    //            }
+
+    //            //赋值目标角度
+    //            if (chassis_move_data.chassis_mode == chassis_not_follow && IF_KEY_PRESSED_F)
+    //            {
+    //                // gimbal_data.gyro_yaw_target_angle = autoaim_measure.yaw;
+    //                gimbal_data.gyro_yaw_target_angle = fn_RadFormat(gimbal_data.gyro_yaw_target_angle + gimbal_data.gyro_yaw_angle_add);
+    //                gimbal_data.gyro_pit_target_angle = autoaim_measure.pitch;
+    //            }
+    //            else
+    //            {
+    //            gimbal_data.gyro_yaw_target_angle = fn_RadFormat(gimbal_data.gyro_yaw_target_angle + gimbal_data.gyro_yaw_angle_add);
+    //            gimbal_data.gyro_pit_target_angle = PitAngleMin;
+    //            }
+    //            //解算GYRO模式下两轴电流
+    //            gimbal_data.f_GimbalYawPidMid = fn_PidClacAngle(&gimbal_data.GimbalIMUYawPid1,INS_eulers[0], gimbal_data.gyro_yaw_target_angle);
+    //            gimbal_motor4310_data[0].target_torque = fn_PidClac(&gimbal_data.GimbalIMUYawPid2,INS_gyro[2],gimbal_data.f_GimbalYawPidMid);
+
+    //            gimbal_data.f_GimbalPitPidMid = fn_PidClacAngle(&gimbal_data.GimbalIMUPitPid1,INS_eulers[1], gimbal_data.gyro_pit_target_angle);
+    //            gimbal_motormi_data[0].given_current = -fn_PidClac(&gimbal_data.GimbalIMUPitPid2,INS_gyro[0],gimbal_data.f_GimbalPitPidMid)
+    //                                                    + sin(PI / 2.0f - OFFSET_ANGLE + gimbal_motormi_data[0].relative_raw_angle) * Tor_param;
+    //        }
+    //     }
+    // }
+    
+    

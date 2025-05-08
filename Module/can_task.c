@@ -8,6 +8,7 @@
 #include "gimbal_task.h"
 #include "cmsis_os.h"
 
+
 HAL_StatusTypeDef can1_flag;
 HAL_StatusTypeDef can2_flag;
 
@@ -97,7 +98,7 @@ void get_dm_motor_data(DM_motor_data_t *data, uint8_t rx_data[8])
 	data->v_int = (rx_data[3] << 4) | (rx_data[4] >> 4);
 	data->t_int = ((rx_data[4] & 0xF) << 8) | rx_data[5];
 	data->last_raw_position = data->raw_position;
-	data->raw_position = uint_to_float(data->p_int, P_MIN, P_MAX, 16); // (-12.5,12.5)
+	data->raw_position = uint_to_float(data->p_int, P_MIN, P_MAX, 16); // (-3.141593,3.141593)
 	//解算多圈编码后的角度
 //	if((data->raw_position - data->last_raw_position) < -4*PI){
 //		data->round_num --;
@@ -106,15 +107,15 @@ void get_dm_motor_data(DM_motor_data_t *data, uint8_t rx_data[8])
 //		data->round_num ++;
 //	}
 	data->position = (float)fn_RadFormat(data->raw_position - data->offecd_angle + (8*PI - 25) * data->round_num);
-	data->velocity = uint_to_float(data->v_int, V_MIN, V_MAX, 12);						// (-45.0,45.0)
-	data->torque = uint_to_float(data->t_int, T_MIN, T_MAX, 12);						// (-18.0,18.0)
+	data->velocity = uint_to_float(data->v_int, V_MIN, V_MAX, 12);						// (-30.0,30.0)
+	data->torque = uint_to_float(data->t_int, T_MIN, T_MAX, 12);						// (-10.0,10.0)
 }
 
 //小米电机数据获取
 void get_mi_motor_data(motor_mi_measure_t *Motor,uint8_t DataFrame[8],uint32_t IDFrame)
 {	
 	Motor->last_ecd = Motor->ecd;
-	Motor->ecd=DataFrame[0]<<8|DataFrame[1];
+	Motor->ecd=(int32_t)DataFrame[0]<<8|DataFrame[1];
 	Motor->speed_rpm=uint16_to_float(DataFrame[2]<<8|DataFrame[3],V_MIN,V_MAX,16);			
 	Motor->Torque=uint16_to_float(DataFrame[4]<<8|DataFrame[5],T_MIN_MI,T_MAX_MI,16);				
 	Motor->Temp=(DataFrame[6]<<8|DataFrame[7])*Temp_Gain;
@@ -563,8 +564,8 @@ void fn_cmd_quat_to_computer(fp32 x, fp32 y, fp32 z, fp32 w)
 
 //加速度发送函数
 
-//射击状态发送函数  CAN1 参数：子弹初速度 模式：1为自瞄、2为打符
-void fn_cmd_shoot_data_to_computer(fp32 speed, char mode)
+//射击状态发送函数  CAN1 参数：子弹初速度 模式：0为自瞄、1为吊射
+void fn_cmd_shoot_data_to_computer(fp32 speed, char chassis_mode)
 {
 	uint32_t send_mail_box2;
 	CAN_TxHeaderTypeDef Txheader2;
@@ -575,7 +576,7 @@ void fn_cmd_shoot_data_to_computer(fp32 speed, char mode)
 	uint8_t CAN_send_data2[3];
 	CAN_send_data2[0] = (uint16_t)(speed * 1e2f) >> 8 ;
 	CAN_send_data2[1] = (uint16_t)(speed * 1e2f);
-	CAN_send_data2[2] = mode ;
+	CAN_send_data2[2] = chassis_mode ;
 
 	HAL_CAN_AddTxMessage
 	(&hcan1,&Txheader2,CAN_send_data2,&send_mail_box2);
@@ -646,7 +647,7 @@ void fn_TriggerMotor3508Data(uint8_t i){
         trigger_motor3508_data[i].round_num ++;
 	}
 	//解算角度 rad
-    trigger_motor3508_data[i].relative_raw_angle = (float)fn_RadFormat(((trigger_motor3508_measure[i].ecd - trigger_motor3508_data[i].offecd_ecd) + trigger_motor3508_data[i].round_num * 8192) / 8192.0f / 19.02f * 2 * PI);
+    trigger_motor3508_data[i].relative_raw_angle = (float)fn_RadFormat(((trigger_motor3508_measure[i].ecd - trigger_motor3508_data[i].offecd_ecd) + trigger_motor3508_data[i].round_num * 8192) / 8192.0f / (3591.0f / 187.0f) * 2 * PI);
 //    for(uint8_t k = 5;0 < k;k--){
 
 //        trigger_motor3508_data[i].raw_angle[k] = trigger_motor3508_data[i].raw_angle[k-1];

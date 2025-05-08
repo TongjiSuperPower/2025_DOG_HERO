@@ -4,6 +4,7 @@
 #include "struct_typedef.h"
 #include "pid.h"
 #include "gimbal_task.h"
+#include "chassis_task.h"
 #include "can.h"
 
 //�궨��
@@ -181,7 +182,7 @@ typedef struct{
 //С��
 typedef struct
 {
-    uint32_t ecd;
+    int32_t ecd;
     float speed_rpm;
     int16_t given_current;
     uint8_t temperate;
@@ -222,7 +223,7 @@ typedef struct{
     fp32 raw_speed[6];                //δ�˲�ת����ٶ�?                                 ���ݣ�����--�ɣ�[0]--[5]��
     fp32 filter_speed[2];             //�˲���ĵ�ǰ�ٶ�?                                 ���ݣ�����--�ɣ�[0]--[2]��
 
-    uint16_t offecd_ecd;              //����ָ����ǰ��ʱ��������?
+    int32_t offecd_ecd;              //����ָ����ǰ��ʱ��������?
     fp32 target_angle;                //��Ҫת��ת���ĽǶ�
     fp32 target_speed;
     fp32 filter_given_current;        //�˲���ķ��صĵ���?
@@ -345,7 +346,7 @@ void fn_cmd_CAN1GimbalMotor2(int16_t motor1, int16_t motor2, int16_t motor3, int
 void fn_cmd_quat_to_computer(fp32 x, fp32 y, fp32 z, fp32 w);
 
 //���״�?���ͺ���  CAN1
-void fn_cmd_shoot_data_to_computer(fp32 speed, char mode);
+void fn_cmd_shoot_data_to_computer(fp32 speed, char chassis_mode);
 
 //����3508������ݽ���?
 void fn_ChassisMotor3508Data(uint8_t i);

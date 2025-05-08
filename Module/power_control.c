@@ -158,7 +158,7 @@ bool_t fn_chassis_speed_reset_w(fp32 infact_Pmax){
         return 0;
     }
     last_infact_Pmax = infact_Pmax;
-    return 1;
+    return 1;              
 }
 
 //分级控制功率

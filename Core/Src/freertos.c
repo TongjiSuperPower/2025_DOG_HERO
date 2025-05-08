@@ -138,32 +138,32 @@ void MX_FREERTOS_Init(void) {
   chassis_taskHandle = osThreadCreate(osThread(chassis_task), NULL);
 
   /* definition and creation of supercap_task */
-  // osThreadDef(supercap_task, SuperCap_Task, osPriorityAboveNormal, 0, 128);
-  // supercap_taskHandle = osThreadCreate(osThread(supercap_task), NULL);
+  osThreadDef(supercap_task, SuperCap_Task, osPriorityAboveNormal, 0, 128);
+  supercap_taskHandle = osThreadCreate(osThread(supercap_task), NULL);
 
   /* definition and creation of referee_task */
-  // osThreadDef(referee_task, Referee_Task, osPriorityHigh, 0, 512);
-  // referee_taskHandle = osThreadCreate(osThread(referee_task), NULL);
+  osThreadDef(referee_task, Referee_Task, osPriorityHigh, 0, 512);
+  referee_taskHandle = osThreadCreate(osThread(referee_task), NULL);
 
   /* definition and creation of ins_task */
-  // osThreadDef(ins_task, Ins_Task, osPriorityHigh, 0, 1024);
-  // ins_taskHandle = osThreadCreate(osThread(ins_task), NULL);
+  osThreadDef(ins_task, Ins_Task, osPriorityHigh, 0, 1024);
+  ins_taskHandle = osThreadCreate(osThread(ins_task), NULL);
 
   /* definition and creation of calibrate_task */
-  // osThreadDef(calibrate_task, Calibrate_Task, osPriorityNormal, 0, 128);
-  // calibrate_taskHandle = osThreadCreate(osThread(calibrate_task), NULL);
+  osThreadDef(calibrate_task, Calibrate_Task, osPriorityNormal, 0, 128);
+  calibrate_taskHandle = osThreadCreate(osThread(calibrate_task), NULL);
 
   /* definition and creation of detect_task */
-  // osThreadDef(detect_task, Detect_Task, osPriorityHigh, 0, 128);
-  // detect_taskHandle = osThreadCreate(osThread(detect_task), NULL);
+  osThreadDef(detect_task, Detect_Task, osPriorityHigh, 0, 128);
+  detect_taskHandle = osThreadCreate(osThread(detect_task), NULL);
 
   /* definition and creation of gimbal_task */
   osThreadDef(gimbal_task, Gimbal_Task, osPriorityHigh, 0, 1024);
   gimbal_taskHandle = osThreadCreate(osThread(gimbal_task), NULL);
 
   /* definition and creation of telescope_task */
-  // osThreadDef(telescope_task, Telescope_Task, osPriorityAboveNormal, 0, 128);
-  // telescope_taskHandle = osThreadCreate(osThread(telescope_task), NULL);
+  osThreadDef(telescope_task, Telescope_Task, osPriorityAboveNormal, 0, 128);
+  telescope_taskHandle = osThreadCreate(osThread(telescope_task), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */

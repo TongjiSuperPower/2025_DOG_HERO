@@ -11,27 +11,27 @@
 
 //������3508���PID����
 //�Ƕ�˫���⻷����
-#define TriggerMotor3508PosPid1_ID205_kp 30.0f
-#define TriggerMotor3508PosPid1_ID205_ki 0.07f
-#define TriggerMotor3508PosPid1_ID205_kd 450.0f
+#define TriggerMotor3508PosPid1_ID205_kp 30.0f//45.0f//10.0f//20.0f//40.0f//35.0f//25.0f//30.0f
+#define TriggerMotor3508PosPid1_ID205_ki 1.0f//0.7f//0.5f//0.005f//0.0f//0.5f//0.01f//0.08f//0.1f//0.01f//0.07f
+#define TriggerMotor3508PosPid1_ID205_kd 1200.0f//0.0f//0.0f//300.0f//450.0f
 //�Ƕ�˫���ڻ�����
-#define TriggerMotor3508PosPid2_ID205_kp 600.0f
-#define TriggerMotor3508PosPid2_ID205_ki 0.0f
-#define TriggerMotor3508PosPid2_ID205_kd 300.0f
+#define TriggerMotor3508PosPid2_ID205_kp 1200.0f//3000.0f//4800.0f//6000.0f//400.0f//800.0f//600.0f
+#define TriggerMotor3508PosPid2_ID205_ki 0.0f//0.0f
+#define TriggerMotor3508PosPid2_ID205_kd 0.0f//30000.0f//55000.0f//10.0f
 //���ٶȻ�����
-#define TriggerMotor3508PosPid3_ID205_kp 320.0f
-#define TriggerMotor3508PosPid3_ID205_ki 2.0f
-#define TriggerMotor3508PosPid3_ID205_kd 100.0f
+#define TriggerMotor3508PosPid3_ID205_kp 800.0f//320.0f
+#define TriggerMotor3508PosPid3_ID205_ki 50.0f//2.0f
+#define TriggerMotor3508PosPid3_ID205_kd 10.0f//100.0f
 
-#define TriggerMotor3508SpeedMinOut -100.0f
-#define TriggerMotor3508SpeedMaxOut 100.0f
-#define TriggerMotor3508SpeedMinIOut -40.0f
-#define TriggerMotor3508SpeedMaxIOut 40.0f
+#define TriggerMotor3508SpeedMinOut -10.0f
+#define TriggerMotor3508SpeedMaxOut 10.0f
+#define TriggerMotor3508SpeedMinIOut -0.2f
+#define TriggerMotor3508SpeedMaxIOut 0.2f
 
 #define TriggerMotor3508MinOut -16000.0f
 #define TriggerMotor3508MaxOut 16000.0f
-#define TriggerMotor3508MinIOut -5000.0f
-#define TriggerMotor3508MaxIOut 5000.0f
+#define TriggerMotor3508MinIOut -1500.0f
+#define TriggerMotor3508MaxIOut 1500.0f
 
 //Ħ����3508���PID����
 //���ٶȻ�PID����
@@ -39,7 +39,7 @@
 #define GimbalMotor3508PosPid3_ID201_ki 0.015f
 #define GimbalMotor3508PosPid3_ID201_kd 10.0f
 
-#define GimbalMotor3508PosPid3_ID202_kp 220.0f
+#define GimbalMotor3508PosPid3_ID202_kp 230.0f
 #define GimbalMotor3508PosPid3_ID202_ki 0.015f
 #define GimbalMotor3508PosPid3_ID202_kd 10.0f
 
@@ -49,8 +49,8 @@
 
 #define GimbalMotor3508MinOut -16000.0f
 #define GimbalMotor3508MaxOut 16000.0f
-#define GimbalMotor3508MinIOut -200.0f
-#define GimbalMotor3508MaxIOut 200.0f
+#define GimbalMotor3508MinIOut -100.0f
+#define GimbalMotor3508MaxIOut 100.0f
 
 
 
@@ -59,9 +59,9 @@
 //��������ģʽת����ȴʱ��
 #define ShootModeTime 1000            //ms
 //ÿ�������������ת�Ƕ�
-#define ShootAngleAdd 1.0472f         //rad   0.92��52.7��
+#define ShootAngleAdd 1.0471975511965f         //rad   0.92��52.7��
 //一次射击为了保证射出暂时多转的角度
-#define ShootAngleAdd_addition 0.0f
+#define ShootAngleAdd_addition 0.01f
 //�����ֶ�ת��ת�Ƕ�
 #define TriggerBackAngle 0.3f         //rad    ��10��
 //��߸����ٳ���ʱ��
@@ -69,7 +69,7 @@
 //��͸����ٳ���ʱ��
 #define ShootTimeLower 1000
 //Ħ����ת��rad/s
-#define FricSpeed 435.0f    //520.0f
+#define FricSpeed 406.0f//435.0f//570.0f//520.0f//f//500.0f//520.0f
 //˫���ж�һ�����Ħ���ֽ�����ֵ
 #define FricSpeedReduce 30.0f
 //˫��������ʱ��

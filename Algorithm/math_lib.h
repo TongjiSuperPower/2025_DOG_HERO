@@ -4,8 +4,8 @@
 #include "struct_typedef.h"
 
 
-#define f_Lx 16.5f                     //两轮轴之间距离的一半            cm
-#define f_Ly 18.4f                     //两轮毂之间距离的一半            cm
+#define f_Lx 17.81f                     //两轮轴之间距离的一半            cm
+#define f_Ly 19.8235f                     //两轮毂之间距离的一半            cm
 #define f_R 7.7f                       //麦轮半径                       cm
 #define f_GimbalDistance 0.0f          //云台位置相对底盘中心向前偏移量  cm
 

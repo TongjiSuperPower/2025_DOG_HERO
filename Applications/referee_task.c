@@ -25,12 +25,16 @@ void referee_unpack_fifo_data(void);
 void referee_data_solve(uint8_t *frame);
 void referee_data_solve(uint8_t *frame);
 void send_multi_static_graphic(void);
+void send_sight_static_graphic(void);//发送准星静态图形
 void send_multi_dynamic_graphic(void);
 void referee_send_multi_graphic(ext_id_t target_id, ext_interaction_figure_seven_t* graphic_draw);
 void referee_send_five_graphic(ext_id_t target_id, ext_interaction_figure_five_t* graphic_draw);
 void send_double_text(void);
 void send_pitch_angle(int x, int y, int color, int type);
+void send_direction(int x, int y, int color, int type);
 void send_capvol_graphic(int capvols);
+void send_sentry_HP_static(void);
+void send_sentry_HP_graphic(uint16_t red_7_robot_HP);
 void send_energy_static(void);
 void send_energy_graphic(int energy);
 void referee_send_client_graphic(ext_id_t target_id, graphic_data_struct_t* graphic_draw);
@@ -47,9 +51,10 @@ bool capdraw = true;
 bool energy_draw = true;
 bool auto_state = true;
 bool shoot = true;
+bool number_7_robot_HP_draw = true;
 
-ext_id_t MY_CLIENT_ID = clientid_blue_infantry_1;
-int MY_ROBOT_ID = robotid_blue_infantry_1;
+ext_id_t MY_CLIENT_ID = clientid_blue_hero;
+int MY_ROBOT_ID = clientid_blue_hero;
 
 uint16_t cmd_id;  // 数据包ID
 
@@ -134,7 +139,7 @@ void Referee_Task(void const * argument){
 
 		UI_PushUp_Counter++;
 				
-		if(UI_PushUp_Counter > 10){
+		if(UI_PushUp_Counter > 20){
 			UI_PushUp_Counter = 0;
 		}
 		
@@ -152,17 +157,21 @@ void Referee_Task(void const * argument){
 			op_type = 2;
 		}
 		
-		if(IF_KEY_PRESSED_R && (capdraw != true || auto_state != true || shoot != true)){
+		if(IF_KEY_PRESSED_R && (capdraw != true || auto_state != true || shoot != true || energy_draw != true)){
 		    //send_multi_graphic();
 		    capdraw = true;
 		    auto_state = true;
 			shoot = true;
+			energy_draw = true;
+			number_7_robot_HP_draw = true;
 		    continue;
 		}
 
+		//staitic rectangle
 		if(UI_static_Counter == 57)
 		{
 			send_energy_static();
+			send_sentry_HP_static();
 			continue;
 		}
 
@@ -173,25 +182,36 @@ void Referee_Task(void const * argument){
 	    }
 
 		//剩余能量数据
-		if(UI_PushUp_Counter == 9){
+		if(UI_PushUp_Counter == 19){
 			send_energy_graphic(sum_energy);
+			if(ext_robot_status.robot_id == robotid_red_hero)
+			{
+				send_sentry_HP_graphic(ext_game_robot_HP.red_7_robot_HP);
+			}
+			else
+			{
+				send_sentry_HP_graphic(ext_game_robot_HP.blue_7_robot_HP);
+			}
 			continue;
 		}
 
 		//电容数据
-		if(UI_PushUp_Counter == 7){
+		if(UI_PushUp_Counter == 16){
 			//REST ENERGY
             send_capvol_graphic(cap_data.Capacity);
 			continue;
 		}
 
-		if(UI_PushUp_Counter == 5)
+		//dynamic string
+		if(UI_PushUp_Counter == 13)
 		{
 			send_pitch_angle(100, 900, 8, op_type);
+			send_direction(1350, 700, 5, op_type);
+			continue;
 		}
 
 		//其余动态数据UI
-		if(UI_PushUp_Counter == 1){
+		if(UI_PushUp_Counter == 7){
 			send_multi_dynamic_graphic();//七个
 			continue;
 		}
@@ -543,7 +563,7 @@ void get_robot_id()
 		}
 }
 
-void send_multi_static_graphic(void)//向客户端发送五个个图形的数据。每个图形包含起点终点、操作类型、颜色、线宽等属性。
+void send_multi_static_graphic(void)//向客户端发送七个个图形的数据。每个图形包含起点终点、操作类型、颜色、线宽等属性。
 {
 
 	ext_interaction_figure_seven_t graphic_draw;
@@ -591,10 +611,8 @@ void send_multi_static_graphic(void)//向客户端发送五个个图形的数据。每个图形包含
 		}
 	}
 	
-	//准星
-	//(952,509)
-	//竖线
-	//竖线
+	//准星坐标 (FRONT_SLIGHT_POSITION_X,FRONT_SLIGHT_POSITION_X)
+	//准星竖线
 	graphic_draw.graphic_data_struct[0].graphic_name[0] = '2';
 	graphic_draw.graphic_data_struct[0].graphic_name[1] = '4';
 	graphic_draw.graphic_data_struct[0].graphic_name[2] = '1';
@@ -604,14 +622,15 @@ void send_multi_static_graphic(void)//向客户端发送五个个图形的数据。每个图形包含
 	graphic_draw.graphic_data_struct[0].graphic_tpye = 0;
 	graphic_draw.graphic_data_struct[0].layer = 2;
 
-	graphic_draw.graphic_data_struct[0].color = 4;
+	graphic_draw.graphic_data_struct[0].color = 2;
 	graphic_draw.graphic_data_struct[0].width = 2;
 
-    graphic_draw.graphic_data_struct[0].start_x = 955;
+    graphic_draw.graphic_data_struct[0].start_x = FRONT_SLIGHT_POSITION_X;//竖线x轴起始位置
 	graphic_draw.graphic_data_struct[0].start_y = 900;
-	graphic_draw.graphic_data_struct[0].details_d = 955;
+	graphic_draw.graphic_data_struct[0].details_d = FRONT_SLIGHT_POSITION_X;//竖线x轴结束位置
 	graphic_draw.graphic_data_struct[0].details_e = 120;
-	//横线
+
+	//准星横线
     graphic_draw.graphic_data_struct[1].graphic_name[0] = '2';
 	graphic_draw.graphic_data_struct[1].graphic_name[1] = '4';
 	graphic_draw.graphic_data_struct[1].graphic_name[2] = '2';
@@ -621,13 +640,13 @@ void send_multi_static_graphic(void)//向客户端发送五个个图形的数据。每个图形包含
 	graphic_draw.graphic_data_struct[1].graphic_tpye = 0;
 	graphic_draw.graphic_data_struct[1].layer = 2;
 
-	graphic_draw.graphic_data_struct[1].color = 8;
+	graphic_draw.graphic_data_struct[1].color = 2;
 	graphic_draw.graphic_data_struct[1].width = 2;
 
-    graphic_draw.graphic_data_struct[1].start_x = 916;
-	graphic_draw.graphic_data_struct[1].start_y = 517;
-	graphic_draw.graphic_data_struct[1].details_d = 956;
-	graphic_draw.graphic_data_struct[1].details_e = 517;
+    graphic_draw.graphic_data_struct[1].start_x = FRONT_SLIGHT_POSITION_X - 75;
+	graphic_draw.graphic_data_struct[1].start_y = FRONT_SLIGHT_POSITION_Y;
+	graphic_draw.graphic_data_struct[1].details_d = FRONT_SLIGHT_POSITION_X + 75;
+	graphic_draw.graphic_data_struct[1].details_e = FRONT_SLIGHT_POSITION_Y;
 
 
 	//圆框
@@ -721,6 +740,31 @@ void send_multi_static_graphic(void)//向客户端发送五个个图形的数据。每个图形包含
 	referee_send_multi_graphic(MY_CLIENT_ID, &graphic_draw);
 }
 
+//绘制象征密位的6条横线，以及自瞄框
+void send_sight_static_graphic()
+{
+
+	graphic_data_struct_t graphic_draw;	
+	//自瞄框
+	graphic_draw.graphic_name[0] = '2';
+	graphic_draw.graphic_name[1] = '5';
+	graphic_draw.graphic_name[2] = '7';
+
+	graphic_draw.operate_tpye = 1;
+
+	graphic_draw.graphic_tpye = 1;
+	graphic_draw.layer = 0;
+
+	graphic_draw.color = 1;
+	graphic_draw.width = 3;
+
+    graphic_draw.start_x = 750;//760
+	graphic_draw.start_y = 180;
+	graphic_draw.details_d = 1100;
+	graphic_draw.details_e = 530;
+	referee_send_client_graphic(MY_CLIENT_ID, &graphic_draw);
+}
+
 void send_multi_dynamic_graphic(void)//向客户端发送七个动态图形的数据。
 {
 
@@ -791,6 +835,8 @@ void send_multi_dynamic_graphic(void)//向客户端发送七个动态图形的数据。
 	
 	graphic_draw.graphic_data_struct[0].details_c = 20;
         
+
+
 	//自瞄数据 相机自瞄视场角
 	graphic_draw.graphic_data_struct[1].graphic_name[0] = '4';
 	graphic_draw.graphic_data_struct[1].graphic_name[1] = '0';
@@ -805,7 +851,7 @@ void send_multi_dynamic_graphic(void)//向客户端发送七个动态图形的数据。
 	}
 	if(gimbal_data.gimbal_behaviour == GIMBAL_AUTO){
 		if(autoaim_measure.vision_state == 1){
-		    graphic_draw.graphic_data_struct[1].color = 2;
+		    graphic_draw.graphic_data_struct[1].color = 1;
 		}
 		else{
 		    graphic_draw.graphic_data_struct[1].color = 3;
@@ -818,12 +864,12 @@ void send_multi_dynamic_graphic(void)//向客户端发送七个动态图形的数据。
 	graphic_draw.graphic_data_struct[1].graphic_tpye = 1;
 	graphic_draw.graphic_data_struct[1].layer = 0;
 
-	graphic_draw.graphic_data_struct[1].width = 1;
+	graphic_draw.graphic_data_struct[1].width = 3;
 
-    graphic_draw.graphic_data_struct[1].start_x = 640;
-	graphic_draw.graphic_data_struct[1].start_y = 270;
-	graphic_draw.graphic_data_struct[1].details_d = 1280;
-	graphic_draw.graphic_data_struct[1].details_e = 770;
+    graphic_draw.graphic_data_struct[1].start_x = 750;
+	graphic_draw.graphic_data_struct[1].start_y = 180;
+	graphic_draw.graphic_data_struct[1].details_d = 1100;
+	graphic_draw.graphic_data_struct[1].details_e = 530;
 
 
     //摩擦轮是否开启
@@ -1005,6 +1051,70 @@ void send_pitch_angle(int x, int y, int color, int type)
 
 }
 
+void send_direction(int x, int y, int color, int type)
+{
+	
+	char data[30];
+	bool sign;
+	char name[3]="211";
+	
+	if(gimbal_motor4310_data[0].raw_position <= -2.08f || gimbal_motor4310_data[0].raw_position >= 1.06f )
+	{
+		sign =true;
+
+	}
+	else if(gimbal_motor4310_data[0].raw_position <= 1.06f && gimbal_motor4310_data[0].raw_position >= -2.08f )
+	{
+		sign =false;
+	}
+
+	if(sign == true)
+	{		
+		data[0] = 'f';
+		data[1] = 'r';
+		data[2] = 'o';
+		data[3] = 'n';
+		data[4] = 't';
+	}
+	else
+	{
+		data[0] = 'b';
+		data[1] = 'a';
+		data[2] = 'c';
+		data[3] = 'k';
+		data[4] = ' ';
+	}
+	
+	data[5] = ' ';
+	data[6] = ' ';
+	data[7] = ' ';
+	data[8] = ' ';
+	data[9] = ' ';
+	data[10] = ' ';
+	data[11] = ' ';
+	data[12] = ' ';
+	data[13] = ' ';
+	data[14] = ' ';
+	data[15] = ' ';
+	data[16] = ' ';
+	data[17] = ' ';
+	data[18] = ' ';
+	data[19] = ' ';
+	data[20] = ' ';
+	data[21] = ' ';
+	data[22] = ' ';
+	data[23] = ' ';
+	data[24] = ' ';
+	data[25] = ' ';
+	data[26] = ' ';
+	data[27] = ' ';
+	data[28] = ' ';
+	data[29] = ' ';	
+
+	send_string(data,name, x, y, type, color);
+
+}
+
 /*//电容框
 	graphic_draw.graphic_data_struct[4].graphic_name[0] = '2';
 	graphic_draw.graphic_data_struct[4].graphic_name[1] = '3';
@@ -1027,7 +1137,7 @@ void send_pitch_angle(int x, int y, int color, int type)
 void send_energy_static(void)
 {
 	graphic_data_struct_t graphic_draw;
-	char name[3] = "210";
+	char name[3] = "310";
 	graphic_draw.graphic_name[0] = name[0];
 	graphic_draw.graphic_name[1] = name[1];
 	graphic_draw.graphic_name[2] = name[2];
@@ -1048,16 +1158,15 @@ void send_energy_static(void)
 }
 
 
-
 void send_energy_graphic(int energy)
 {
 	
 	graphic_data_struct_t graphic_draw;
-	char capname[3] = "211";
+	char capname[3] = "311";
 	graphic_draw.graphic_name[0] = capname[0];
 	graphic_draw.graphic_name[1] = capname[1];
 	graphic_draw.graphic_name[2] = capname[2];
-	if(energy_draw){
+	if(energy_draw || IF_KEY_PRESSED_R){
 	    graphic_draw.operate_tpye = 1;
 	    energy_draw = false;
 	}
@@ -1081,6 +1190,70 @@ void send_energy_graphic(int energy)
 	//memcpy(graphic_draw.graphic_name, (uint8_t*)name, strlen(name));
 	referee_send_client_graphic(MY_CLIENT_ID, &graphic_draw);
 }
+
+//rectangle of sentry HP
+void send_sentry_HP_static(void)
+{
+	graphic_data_struct_t graphic_draw;
+	char name[3] = "990";
+	graphic_draw.graphic_name[0] = name[0];
+	graphic_draw.graphic_name[1] = name[1];
+	graphic_draw.graphic_name[2] = name[2];
+	
+	graphic_draw.operate_tpye = 1;
+	graphic_draw.graphic_tpye = 1;
+	graphic_draw.layer = 0;
+
+	graphic_draw.color = 8;
+	graphic_draw.width = 1;
+
+	graphic_draw.start_x = 1400;
+	graphic_draw.start_y = 375;
+	graphic_draw.details_d = 1700;
+	graphic_draw.details_e = 351;
+
+	referee_send_client_graphic(MY_CLIENT_ID, &graphic_draw);
+}
+
+void send_sentry_HP_graphic(uint16_t red_7_robot_HP)
+{
+	
+	graphic_data_struct_t graphic_draw;
+	char capname[3] = "312";
+	graphic_draw.graphic_name[0] = capname[0];
+	graphic_draw.graphic_name[1] = capname[1];
+	graphic_draw.graphic_name[2] = capname[2];
+	if(number_7_robot_HP_draw || IF_KEY_PRESSED_R){
+	    graphic_draw.operate_tpye = 1;
+	    number_7_robot_HP_draw = false;
+	}
+	else
+	{
+	    graphic_draw.operate_tpye = 2;
+	}
+
+	if(red_7_robot_HP <= 150)
+	{
+		graphic_draw.color = 5;
+	}
+	else{
+		graphic_draw.color = 6;
+	}
+
+	graphic_draw.graphic_tpye = 0;	//直线
+	graphic_draw.layer = 1;
+
+	graphic_draw.width = 18; //线条宽度
+	graphic_draw.start_x = 1400;
+	graphic_draw.start_y = 363;
+	
+	graphic_draw.details_d  = 1400 + red_7_robot_HP  * 0.75f ;
+	graphic_draw.details_e  = 363;
+	
+	//memcpy(graphic_draw.graphic_name, (uint8_t*)name, strlen(name));
+	referee_send_client_graphic(MY_CLIENT_ID, &graphic_draw);
+}
+
 void send_capvol_graphic(int capvols)
 {
 	graphic_data_struct_t graphic_draw;
@@ -1088,7 +1261,7 @@ void send_capvol_graphic(int capvols)
 	graphic_draw.graphic_name[0] = capname[0];
 	graphic_draw.graphic_name[1] = capname[1];
 	graphic_draw.graphic_name[2] = capname[2];
-	if(capdraw){
+	if(capdraw || IF_KEY_PRESSED_R){
 	    graphic_draw.operate_tpye = 1;
 	    capdraw = false;
 	}
@@ -1118,7 +1291,7 @@ void send_capvol_graphic(int capvols)
 	referee_send_client_graphic(MY_CLIENT_ID, &graphic_draw);
 }
 
-
+//发送7个图形
 void referee_send_multi_graphic(ext_id_t target_id, ext_interaction_figure_seven_t* graphic_draw){
 
 	static ext_robot_seven_graphic_data_t robot_data;
@@ -1243,7 +1416,7 @@ void referee_send_client_graphic(ext_id_t target_id, graphic_data_struct_t* grap
 
 	memcpy(Personal_Data, (uint8_t*)&robot_data, sizeof(robot_data));
 	usart6_tx_dma_enable(Personal_Data, sizeof(robot_data));
-
+	osDelay(33);
 }
 
 void referee_send_client_character(ext_id_t target_id, ext_client_custom_character_t* character_data) {
@@ -1266,6 +1439,7 @@ void referee_send_client_character(ext_id_t target_id, ext_client_custom_charact
 
 	memcpy(Personal_Data, (uint8_t*)&robot_data, sizeof(robot_data));
 	usart6_tx_dma_enable(Personal_Data, sizeof(robot_data));
+	osDelay(33);
 
 }
 
@@ -1292,6 +1466,7 @@ void  send_string(char* str, char* name, int x, int y, int upd, int colour)
 	memcpy(character_data.graphic_data_struct.graphic_name, (uint8_t*)name, strlen(name));
 
 	referee_send_client_character(MY_CLIENT_ID, &character_data);
+	osDelay(33);
 }
 
 void send_rub_graphic(char graphname[3], int x, int y, int color, int type)

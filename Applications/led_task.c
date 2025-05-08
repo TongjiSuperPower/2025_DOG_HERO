@@ -24,22 +24,19 @@ void LED_Task(void const * argument){
     while(1){
         //如果遥控器数据错误，则一直亮红灯
         //if(remote_control_data_error_flag == 1){
-        // if(can2_flag == 0x01U){
-        //     fn_LedRed();
-        // }
-        // //如果遥控器没有正常收到值，则一直亮蓝灯
-        // //else if(rc_receive_flag == 1){
-        // else if(can1_flag == 0x01U){
-        //     fn_LedGreen();
-        // }
-        // else{
-        //     fn_LedBlue();
-        //     fn_LedGreen();
-        //     fn_LedRed();
-        // }
-        fn_LedBlue();
-        fn_LedGreen();
-        fn_LedRed();
+        if(can2_flag == 0x01U){
+            fn_LedRed();
+        }
+        //如果遥控器没有正常收到值，则一直亮蓝灯
+        //else if(rc_receive_flag == 1){
+        else if(can1_flag == 0x01U){
+            fn_LedGreen();
+        }
+        else{
+            fn_LedBlue();
+            fn_LedGreen();
+            fn_LedRed();
+        }
     }
 }
 

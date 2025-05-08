@@ -5,9 +5,9 @@
 #include "gimbal_task.h"
 
 
-#define GyroXZero 0.0f
-#define GyroYZero 0.0f
-#define GyroZZero 0.0f
+#define GyroXZero 0.00989371073f
+#define GyroYZero 0.0044168164f
+#define GyroZZero 0.0040072063f
 
 
 extern uint8_t calibrate_flag;

@@ -140,7 +140,10 @@ void fn_fric_state(void){
 	if(IF_RC_SW2_DOWN){
 		shoot_data.fric_state = FRIC_DOWN;
 	}
-	if((shoot_data.fric_state == FRIC_OFF || shoot_data.fric_state == FRIC_DOWN ||shoot_data.fric_state == FRIC_WARMING) && (IF_RC_SW1_UP && shoot_data.fric_state_change_flag == 1) && !IF_RC_SW2_DOWN){
+	if((shoot_data.fric_state == FRIC_OFF || shoot_data.fric_state == FRIC_DOWN ||shoot_data.fric_state == FRIC_WARMING) 
+		&& !IF_RC_SW2_DOWN 
+		&& ((IF_RC_SW1_UP && shoot_data.fric_state_change_flag == 1) || (IF_RC_SW2_MID && ext_game_status.game_progress == 4 && IF_MOUSE_PRESSED_LEFT))) 
+	{
         shoot_data.fric_state = FRIC_ON;
 		shoot_data.fric_state_change_flag = 0;
 	}
@@ -184,12 +187,12 @@ void fn_ShootMode(void){
 	if(IF_RC_SW2_UP && clear_time == 0){
 		shoot_data.shoot_single_or_countinue_flag = 2;
 	}
-	if(IF_RC_SW2_MID && !IF_KEY_PRESSED_Z){
-		shoot_data.shoot_single_or_countinue_flag = 0;
-	}
-	if(IF_RC_SW2_MID && IF_KEY_PRESSED_Z){
-		shoot_data.shoot_single_or_countinue_flag = 1;
-	}
+	// if(IF_RC_SW2_MID && !IF_KEY_PRESSED_Z){
+	// 	shoot_data.shoot_single_or_countinue_flag = 0;
+	// }
+	// if(IF_RC_SW2_MID && IF_KEY_PRESSED_Z){
+	// 	shoot_data.shoot_single_or_countinue_flag = 1;
+	// }
 	//射击模式选择
 	if(shoot_data.fric_state == FRIC_OFF || shoot_data.fric_state == FRIC_DOWN){
 		shoot_data.shoot_mode = SHOOT_DOWN;
@@ -201,8 +204,8 @@ void fn_ShootMode(void){
 		shoot_data.shoot_mode = SHOOT_READY_COUNTINUE;
 	}
 	if(shoot_data.fric_state == FRIC_ON && shoot_data.shoot_single_or_countinue_flag == 2){
-		shoot_data.shoot_mode = SHOOT_CLEAR;
-	}
+		// shoot_data.shoot_mode = SHOOT_CLEAR;
+		shoot_data.shoot_mode = SHOOT_READY_SINGLE;	}
 	//堵转反转模式
 	if(trigger_motor3508_block_flag){
 		shoot_data.shoot_mode = SHOOT_INIT;
@@ -249,12 +252,14 @@ void fn_ShootMove(void){
 		}
 		//单发模式下 左摇杆拨到中间且松掉鼠标左键同时冷却时间为0则给予射击权限
 		if(shoot_data.shoot_cold_time == 0 && !IF_RC_SW1_DOWN && !IF_MOUSE_PRESSED_LEFT && (ext_robot_status.shooter_barrel_heat_limit - ext_power_heat_data.shooter_42mm_barrel_heat) >= 100){  // && (ext_robot_status.shooter_barrel_heat_limit - ext_power_heat_data.shooter_42mm_barrel_heat) >= 100
+		// if(shoot_data.shoot_cold_time == 0 && !IF_RC_SW1_DOWN && !IF_MOUSE_PRESSED_LEFT){ 
 		    shoot_data.shoot_permission_flag = 1;
 		}
 		//判断是否满足射击要求
 		if((IF_RC_SW1_DOWN || (IF_MOUSE_PRESSED_LEFT || (IF_MOUSE_PRESSED_RIGHT && autoaim_measure.shoot == 1)))&& shoot_data.shoot_permission_flag == 1){
 		//if((IF_RC_SW1_DOWN || IF_MOUSE_PRESSED_LEFT )&& shoot_data.shoot_permission_flag == 1){
-			trigger_motor3508_data[0].target_angle = fn_RadFormat(trigger_motor3508_data[0].target_angle - ShootAngleAdd);
+			// trigger_motor3508_data[0].target_angle = fn_RadFormat(trigger_motor3508_data[0].target_angle - ShootAngleAdd - ShootAngleAdd_addition);
+			trigger_motor3508_data[0].target_angle = fn_RadFormat(trigger_motor3508_data[0].target_angle - ShootAngleAdd );
 			shoot_continue_time = 0;
 			shoot_data.shoot_permission_flag = 0; 
 			shoot_data.shoot_over_flag = 0;
@@ -267,11 +272,13 @@ void fn_ShootMove(void){
 		//单发模式下速度设为0
 		trigger_motor3508_data[0].target_speed = 0;
 
+
+
 		//单发模式下拨弹轮电流计算
 		trigger_motor3508_data[0].double_pid_mid = fn_PidClacAngle(&trigger_motor3508_data[0].motor_pid1,
 		                                                           trigger_motor3508_data[0].relative_raw_angle,trigger_motor3508_data[0].target_angle);
 		trigger_motor3508_data[0].given_current = fn_PidClac(&trigger_motor3508_data[0].motor_pid2,
-		                                                     trigger_motor3508_data[0].relative_raw_speed,trigger_motor3508_data[0].double_pid_mid);
+		                                                     trigger_motor3508_data[0].filter_speed[0],trigger_motor3508_data[0].double_pid_mid);
 
 
 		//双发预测

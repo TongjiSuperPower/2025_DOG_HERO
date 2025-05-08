@@ -19,6 +19,12 @@
 #define USART_RX_BUF_LENGHT     512
 #define REFEREE_FIFO_BUF_LENGTH 1024
 
+#define FRONT_SLIGHT_POSITION_X 935
+#define FRONT_SLIGHT_POSITION_Y 520
+
+#define DX 30
+#define DY 15
+
 #define REFEREE_FRAME_HEADER_SOF                ((uint8_t)(0xA5))
 
 #define REFEREE_STUDENT_ROBOT_MAX               ((uint16_t)(0x0200))
@@ -567,6 +573,7 @@ extern ext_power_heat_data_t ext_power_heat_data;
 extern ext_robot_status_t ext_robot_status;
 extern ext_robot_shoot_data_t ext_robot_shoot_data;
 extern ext_remote_control_t ext_remote_control;
+extern ext_game_status_t ext_game_status;
 
 //��ȡ���̹���
 void get_chassis_power_and_buffer(fp32 *power, fp32 *buffer);

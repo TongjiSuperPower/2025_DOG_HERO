@@ -6,6 +6,7 @@
 #include "bsp_tim.h"
 #include "servo_task.h"
 #include "remote_control.h"
+#include "gimbal_task.h"
 
 //音符？音调？感兴趣的可以自己设计一款车载音乐
 const uint32_t btnDelay2=1.5*300;//0.5
@@ -71,6 +72,16 @@ void Buzzer_Task(void const * argument){
 		else if(IF_KEY_PRESSED_B && !last_B_key && ocular_servo.mode == OCULAR_OPEN)
 		{
 			ocular_servo.mode = OCULAR_CLOSE;
+		}
+		else if(gimbal_data.gimbal_behaviour == GIMBAL_PASS)
+		{
+			ocular_servo.mode = OCULAR_PASS;
+			ocular_servo.last_mode = ocular_servo.mode;
+		}
+		else if(ocular_servo.mode == OCULAR_PASS && gimbal_data.gimbal_behaviour == GIMBAL_GYRO)
+		{
+			ocular_servo.mode = OCULAR_CLOSE;
+			ocular_servo.last_mode = ocular_servo.mode;
 		}
 		fn_setpwm_ocular();	//计算pwm
 		fn_servo_pwm_set(ocular_servo.pwm_set, ocular_servo.channel);

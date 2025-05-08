@@ -30,9 +30,9 @@
 #define chassis_motor3508_max_iout 7000.0f
 
 //底盘跟随PID参数
-#define chassis_follow_pid_kp 7.0f
+#define chassis_follow_pid_kp 16.0f//23.0f//16.0f
 #define chassis_follow_pid_ki 0.0f
-#define chassis_follow_pid_kd 280.0f
+#define chassis_follow_pid_kd 200.0f
 
 #define chassis_follow_min_out -5.0f
 #define chassis_follow_max_out 5.0f
@@ -78,7 +78,7 @@
 //底盘模式参数
 typedef enum{
 
-    chassis_follow,
+    chassis_follow, //
     chassis_not_follow,
     chassis_spin,
 	chassis_down,
