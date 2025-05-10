@@ -130,7 +130,13 @@ void Gimbal_Task(void const * argument){
         
         //给上位机发送射击数据 50Hz
         if(shoot_mode_sned_num > 19){
-            fn_cmd_shoot_data_to_computer(ext_robot_shoot_data.initial_speed,chassis_move_data.chassis_mode);
+            if(chassis_move_data.chassis_mode == chassis_not_follow){
+                fn_cmd_shoot_data_to_computer(ext_robot_shoot_data.initial_speed,chassis_move_data.chassis_mode);
+            }
+            else{
+                fn_cmd_shoot_data_to_computer(ext_robot_shoot_data.initial_speed, autoaim_measure.autoaim_mode);
+            }
+            
             shoot_mode_sned_num = 0;
         }
         shoot_mode_sned_num++;
@@ -248,7 +254,7 @@ void fn_GimbalMotorInit(void){
     gimbal_motor4310_data[0].round_num = 0;
     gimbal_motor4310_data[0].target_angle = 0.0f;
     gimbal_motor4310_data[0].target_torque = 0.0f;
-    gimbal_motor4310_data[0].offecd_angle = 1.32408571f;// 1.32408571
+    gimbal_motor4310_data[0].offecd_angle = 1.20404959f;// 1.32408571
 																			
 
     gimbal_motor4310_data[0].double_pid_mid = 0.0f;

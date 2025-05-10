@@ -1,3 +1,4 @@
 Load "2025_HERO_FRIC\\2025_HERO_FRIC.axf" 
-Erase Done.Programming Done.Verify OK.Application running ...
-Flash Load finished at 23:20:11
+Internal DLL Error
+Error: Flash Download failed  -  Target DLL has been cancelled
+Flash Load finished at 01:48:26

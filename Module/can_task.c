@@ -565,7 +565,7 @@ void fn_cmd_quat_to_computer(fp32 x, fp32 y, fp32 z, fp32 w)
 //加速度发送函数
 
 //射击状态发送函数  CAN1 参数：子弹初速度 模式：0为自瞄、1为吊射
-void fn_cmd_shoot_data_to_computer(fp32 speed, char chassis_mode)
+void fn_cmd_shoot_data_to_computer(fp32 speed, char autoaim_mode)
 {
 	uint32_t send_mail_box2;
 	CAN_TxHeaderTypeDef Txheader2;
@@ -576,7 +576,7 @@ void fn_cmd_shoot_data_to_computer(fp32 speed, char chassis_mode)
 	uint8_t CAN_send_data2[3];
 	CAN_send_data2[0] = (uint16_t)(speed * 1e2f) >> 8 ;
 	CAN_send_data2[1] = (uint16_t)(speed * 1e2f);
-	CAN_send_data2[2] = chassis_mode ;
+	CAN_send_data2[2] = autoaim_mode;
 
 	HAL_CAN_AddTxMessage
 	(&hcan1,&Txheader2,CAN_send_data2,&send_mail_box2);

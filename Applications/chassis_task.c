@@ -223,7 +223,7 @@ void fn_ChassisMode(void){
         if(!IF_KEY_PRESSED_SHIFT && chassis_move_data.chassis_mode != chassis_not_follow && gimbal_data.gimbal_behaviour != GIMBAL_INIT){
             chassis_move_data.chassis_mode = chassis_follow;
         }
-        //按下B进入吊射模式则固定底盘掉底盘
+        //按下Ctrl进入吊射模式则固定底盘掉底盘
         if(IF_KEY_PRESSED_CTRL && gimbal_data.gimbal_behaviour != GIMBAL_INIT && chassis_move_data.chassis_mode != chassis_not_follow && chassis_mode_time == 0){
             chassis_move_data.chassis_mode = chassis_not_follow;
             chassis_mode_time = 500;
@@ -233,8 +233,8 @@ void fn_ChassisMode(void){
             chassis_move_data.chassis_mode = chassis_follow;
             chassis_mode_time = 500;
         }
-        //SHIFT放在后面保证在任何模式下按下SHIFT后都是小陀螺模式
-        if(IF_KEY_PRESSED_SHIFT && gimbal_data.gimbal_behaviour != GIMBAL_INIT){
+        //SHIFT放在后面保证在任何模式下按下SHIFT后都是小陀螺模式 因为写了R的组合键，因此当R按下时即使SHIFT也不进入小陀螺模式
+        if(IF_KEY_PRESSED_SHIFT && gimbal_data.gimbal_behaviour != GIMBAL_INIT && !IF_KEY_PRESSED_R){
             chassis_move_data.chassis_mode = chassis_spin;
         }
         //如果在观测中退出了小陀螺模式，则清除观测数据，下次重新开始观测
