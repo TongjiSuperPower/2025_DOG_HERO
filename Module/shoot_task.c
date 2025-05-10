@@ -30,6 +30,8 @@ uint16_t continue_shoot_mode_time;
 uint8_t continue_shoot_mode;
 //进入清弹模式的计时，摩擦轮打开左摇杆拨到下1s
 uint16_t clear_time;
+//雷达启用组合键保护时间，700ms内不会二次触发
+uint16_t radar_time;
 
 void fn_ShootMode(void);
 
@@ -117,6 +119,8 @@ void fn_shoot_init(void){
 	shoot_data.last_infact_shoot_speed = 0.0f;
 
 	clear_time = 1000;
+	
+	radar_time = 700;
 
 	//shoot_data.shoot_over_back_flag = 0;
 	shoot_data.first_shoot_flag = 1;
@@ -127,6 +131,8 @@ void fn_shoot_init(void){
 	shoot_data.shoot_single_or_countinue_flag = 0;
 	shoot_data.double_shoot_flag = 0;
 	shoot_data.last_key_pressed_g = 0;
+
+	autoaim_measure.autoaim_mode = RADAR_DISABLE;
 }
 
 
@@ -171,12 +177,34 @@ void fn_fric_state(void){
 
 //射击模式选择
 void fn_ShootMode(void){
+
+	if(radar_time > 0){
+		radar_time--;
+	}
+	if(IF_KEY_PRESSED_SHIFT && IF_KEY_PRESSED_R && radar_time == 0 && autoaim_measure.autoaim_mode == RADAR_DISABLE){
+		autoaim_measure.autoaim_mode = RADAR_ENABLE;
+		radar_time = 700;
+	}
+	if(IF_KEY_PRESSED_SHIFT && IF_KEY_PRESSED_R && radar_time == 0 && autoaim_measure.autoaim_mode == RADAR_ENABLE){
+		autoaim_measure.autoaim_mode = RADAR_DISABLE;
+		radar_time = 700;
+	}
+	// if(IF_RC_SW2_MID && IF_KEY_PRESSED){
+	// 	autoaim_measure.autoaim_mode = autoaim_measure.autoaim_mode || chassis_move_data.chassis_mode ? RADAR_ENABLE : RADAR_DISABLE;
+	// }
+	// if(autoaim_measure.autoaim_mode == RADAR_ENABLE){
+	// 	autoaim_measure.autoaim_mode = RADAR_ENABLE;
+	// }
+
+
 	//正在回转中不选择模式
 	if(shoot_data.trigger_back_flag){
 		return;
 	}
 	if(IF_RC_SW1_MID){
 		clear_time = 1000;
+
+		
 	}
 	if(shoot_data.fric_state == FRIC_ON && IF_RC_SW2_UP && IF_RC_SW1_DOWN && clear_time > 0){
 		clear_time--;

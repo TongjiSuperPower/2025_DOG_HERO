@@ -76,6 +76,9 @@
 #define DetectTime 600
 
 
+
+
+
 typedef enum{
     
     SHOOT_DOWN,                 //Ħ����δ�򿪣����ģ��down

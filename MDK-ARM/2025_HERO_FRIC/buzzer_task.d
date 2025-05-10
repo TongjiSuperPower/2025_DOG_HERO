@@ -2,8 +2,8 @@
 2025_hero_fric\buzzer_task.o: ..\Applications\buzzer_task.h
 2025_hero_fric\buzzer_task.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 2025_hero_fric\buzzer_task.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-2025_hero_fric\buzzer_task.o: D:\Software\Keil_5\ARM\ARMCC\Bin\..\include\stddef.h
-2025_hero_fric\buzzer_task.o: D:\Software\Keil_5\ARM\ARMCC\Bin\..\include\stdint.h
+2025_hero_fric\buzzer_task.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+2025_hero_fric\buzzer_task.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 2025_hero_fric\buzzer_task.o: ../Core/Inc/FreeRTOSConfig.h
 2025_hero_fric\buzzer_task.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 2025_hero_fric\buzzer_task.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
@@ -58,10 +58,10 @@
 2025_hero_fric\buzzer_task.o: ../Module/servo_task.h
 2025_hero_fric\buzzer_task.o: ../Module/remote_control.h
 2025_hero_fric\buzzer_task.o: ../Applications/referee_task.h
-2025_hero_fric\buzzer_task.o: D:\Software\Keil_5\ARM\ARMCC\Bin\..\include\stdio.h
+2025_hero_fric\buzzer_task.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 2025_hero_fric\buzzer_task.o: ../Core/Inc/can.h
 2025_hero_fric\buzzer_task.o: ../Bsp/bsp_usart.h
 2025_hero_fric\buzzer_task.o: ../Module/fifo.h
-2025_hero_fric\buzzer_task.o: D:\Software\Keil_5\ARM\ARMCC\Bin\..\include\string.h
-2025_hero_fric\buzzer_task.o: D:\Software\Keil_5\ARM\ARMCC\Bin\..\include\stdlib.h
+2025_hero_fric\buzzer_task.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+2025_hero_fric\buzzer_task.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 2025_hero_fric\buzzer_task.o: ../Module/protocol.h
